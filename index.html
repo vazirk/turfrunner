@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurfRunner — Win Every Door. Win Every Race.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:   #080b10;
+  --dark:    #0f1520;
+  --panel:   #141c2a;
+  --card:    #1a2436;
+  --border:  rgba(255,255,255,0.07);
+  --blue:    #1d6ef5;
+  --bluem:   #1558c8;
+  --cyan:    #00d4ff;
+  --gold:    #f5a623;
+  --goldl:   #ffc654;
+  --red:     #e63946;
+  --green:   #22c55e;
+  --slate:   #94a3b8;
+  --white:   #f0f4ff;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'Barlow',sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;}
+
+/* GRAIN */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.4;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 64px;background:rgba(8,11,16,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-mark{width:38px;height:38px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.logo-mark::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue),var(--cyan));opacity:0.8;}
+.logo-mark span{position:relative;z-index:1;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:#fff;letter-spacing:-1px;}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
+.logo-text em{color:var(--cyan);font-style:normal;}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{color:var(--slate);font-size:14px;font-weight:500;text-decoration:none;letter-spacing:0.3px;transition:color 0.2s;}
+.nav-links a:hover{color:var(--white);}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-login{padding:8px 20px;background:transparent;color:var(--white);border:1px solid var(--border);border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.nav-login:hover{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.05);}
+.nav-cta{padding:8px 22px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.nav-cta:hover{background:var(--bluem);transform:translateY(-1px);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 40px 80px;position:relative;overflow:hidden;}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.4;}
+.hero-glow{position:absolute;width:800px;height:500px;background:radial-gradient(ellipse,rgba(29,110,245,0.2) 0%,transparent 70%);top:40%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.hero-glow2{position:absolute;width:400px;height:400px;background:radial-gradient(ellipse,rgba(0,212,255,0.08) 0%,transparent 70%);top:30%;right:15%;pointer-events:none;}
+
+.hero-eyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;background:rgba(29,110,245,0.12);border:1px solid rgba(29,110,245,0.3);border-radius:4px;padding:6px 14px;font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;animation:fadeUp 0.5s ease both;}
+.eyebrow-pulse{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.6)}}
+
+.hero h1{position:relative;z-index:1;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(64px,9vw,130px);line-height:0.9;letter-spacing:-2px;text-transform:uppercase;margin-bottom:28px;animation:fadeUp 0.6s ease 0.1s both;}
+.hero h1 .line1{display:block;color:var(--white);}
+.hero h1 .line2{display:block;color:var(--cyan);-webkit-text-stroke:2px var(--cyan);color:transparent;}
+.hero h1 .line3{display:block;color:var(--white);}
+
+.hero-sub{position:relative;z-index:1;font-size:18px;line-height:1.65;color:var(--slate);max-width:560px;margin-bottom:44px;font-weight:400;animation:fadeUp 0.6s ease 0.2s both;}
+.hero-sub strong{color:var(--white);font-weight:600;}
+
+.hero-btns{position:relative;z-index:1;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.6s ease 0.3s both;}
+.btn-xl-primary{padding:16px 40px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;text-decoration:none;box-shadow:0 0 40px rgba(29,110,245,0.3);}
+.btn-xl-primary:hover{background:var(--bluem);transform:translateY(-2px);box-shadow:0 0 60px rgba(29,110,245,0.5);}
+.btn-xl-ghost{padding:16px 40px;background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.2);border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.btn-xl-ghost:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.35);}
+
+.hero-stats{position:relative;z-index:1;display:flex;gap:0;margin-top:72px;border:1px solid var(--border);border-radius:10px;overflow:hidden;animation:fadeUp 0.6s ease 0.4s both;}
+.hstat{padding:22px 40px;text-align:center;border-right:1px solid var(--border);background:rgba(255,255,255,0.02);}
+.hstat:last-child{border-right:none;}
+.hstat-num{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:var(--white);}
+.hstat-label{font-size:12px;color:var(--slate);font-weight:500;margin-top:3px;letter-spacing:0.5px;}
+
+/* APP PREVIEW */
+.preview-section{padding:80px 64px;position:relative;overflow:hidden;}
+.preview-section .inner{max-width:1200px;margin:0 auto;}
+.preview-frame{background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);}
+.preview-bar{background:var(--dark);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:8px;}
+.pb-dot{width:10px;height:10px;border-radius:50%;}
+.preview-body{display:grid;grid-template-columns:200px 1fr;min-height:480px;}
+.preview-sidebar{background:rgba(255,255,255,0.02);border-right:1px solid var(--border);padding:20px 0;}
+.ps-logo{padding:0 16px 20px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.ps-logo-inner{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
+.ps-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:12px;font-weight:600;color:var(--slate);cursor:pointer;transition:all 0.15s;letter-spacing:0.3px;}
+.ps-item:hover,.ps-item.active{background:rgba(29,110,245,0.1);color:var(--white);}
+.ps-item.active{border-left:2px solid var(--blue);color:var(--cyan);}
+.ps-dot{width:7px;height:7px;border-radius:50%;}
+.preview-main{padding:24px;}
+.pm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.pm-stat{background:var(--card);border-radius:8px;padding:14px 16px;border:1px solid var(--border);}
+.pm-stat-n{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;line-height:1;}
+.pm-stat-l{font-size:10px;color:var(--slate);margin-top:3px;text-transform:uppercase;letter-spacing:1px;}
+.pm-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.pm-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.pm-card-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
+.issue-bar-r{margin-bottom:8px;}
+.ib-label{display:flex;justify-content:space-between;font-size:11px;color:var(--slate);margin-bottom:3px;}
+.ib-track{background:rgba(255,255,255,0.08);border-radius:2px;height:5px;overflow:hidden;}
+.ib-fill{height:100%;border-radius:2px;}
+.sup-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.sup-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sup-label{font-size:11px;color:var(--slate);flex:1;}
+.sup-num{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--white);}
+
+/* SECTIONS */
+section{position:relative;z-index:1;}
+.section-wrap{max-width:1140px;margin:0 auto;}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.section-h{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(38px,5vw,62px);line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:var(--white);}
+.section-h em{color:var(--cyan);font-style:normal;}
+.section-body{font-size:16px;line-height:1.7;color:var(--slate);margin-top:16px;max-width:480px;}
+
+/* LEVELS */
+.levels-section{padding:100px 64px;background:var(--dark);}
+.levels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:60px;background:var(--border);border-radius:12px;overflow:hidden;}
+.level-tile{background:var(--panel);padding:36px 28px;transition:background 0.2s;}
+.level-tile:hover{background:var(--card);}
+.level-icon{font-size:32px;margin-bottom:16px;}
+.level-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin-bottom:8px;}
+.level-desc{font-size:13px;line-height:1.6;color:var(--slate);}
+.level-examples{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.level-tag{padding:3px 9px;border-radius:4px;background:rgba(29,110,245,0.1);border:1px solid rgba(29,110,245,0.2);font-size:11px;font-weight:600;color:var(--cyan);letter-spacing:0.5px;}
+
+/* FEATURES */
+.features-section{padding:100px 64px;}
+.features-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;margin-top:64px;}
+.feature-list{display:flex;flex-direction:column;gap:0;}
+.feature-item{display:flex;gap:16px;padding:22px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.2s;}
+.feature-item:first-child{border-top:1px solid var(--border);}
+.feature-item:hover,.feature-item.active{padding-left:12px;}
+.fi-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-top:2px;}
+.fi-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);margin-bottom:4px;}
+.fi-desc{font-size:13px;line-height:1.6;color:var(--slate);}
+.fi-badge{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.badge-unique{background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.25);}
+.badge-new{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+
+.feature-showcase{position:sticky;top:120px;}
+.showcase-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;min-height:360px;display:flex;flex-direction:column;gap:16px;transition:all 0.3s;}
+.sc-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:var(--white);}
+.sc-body{font-size:14px;line-height:1.7;color:var(--slate);}
+.sc-visual{flex:1;background:rgba(29,110,245,0.05);border:1px dashed rgba(29,110,245,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;min-height:180px;font-size:48px;opacity:0.7;}
+
+/* COMPARE */
+.compare-section{padding:100px 64px;background:var(--dark);}
+.compare-table-wrap{margin-top:60px;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;}
+th{padding:18px 20px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);text-align:center;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border);}
+th:first-child{text-align:left;}
+th.ours{color:var(--cyan);background:rgba(29,110,245,0.08);}
+td{padding:14px 20px;border-bottom:1px solid var(--border);font-size:13px;color:var(--slate);text-align:center;}
+td:first-child{text-align:left;color:var(--white);font-weight:500;}
+td.ours{background:rgba(29,110,245,0.04);color:var(--white);}
+tr:last-child td{border-bottom:none;}
+.chk{color:var(--green);font-size:16px;}
+.crs{color:rgba(255,255,255,0.15);font-size:14px;}
+.prt{color:var(--gold);font-size:12px;}
+
+/* PRICING */
+.pricing-section{padding:100px 64px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px;}
+.pricing-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:32px 28px;position:relative;transition:transform 0.3s;}
+.pricing-card:hover{transform:translateY(-4px);}
+.pricing-card.featured{background:var(--card);border-color:rgba(29,110,245,0.4);}
+.feat-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 16px;border-radius:0 0 8px 8px;}
+.plan-tier{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+.plan-price-wrap{margin-bottom:8px;}
+.plan-price{font-family:'Barlow Condensed',sans-serif;font-size:54px;font-weight:900;color:var(--white);line-height:1;}
+.plan-price span{font-size:20px;color:var(--slate);font-weight:400;}
+.plan-period{font-size:13px;color:var(--slate);margin-bottom:20px;}
+.plan-desc{font-size:13px;line-height:1.6;color:var(--slate);margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.plan-features li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.4;}
+.plan-features li::before{content:'✓';color:var(--cyan);font-weight:800;flex-shrink:0;}
+.plan-btn{display:block;width:100%;padding:13px;text-align:center;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:all 0.2s;cursor:pointer;border:none;}
+.plan-btn-primary{background:var(--blue);color:#fff;}
+.plan-btn-primary:hover{background:var(--bluem);}
+.plan-btn-ghost{background:transparent;color:var(--white);border:1px solid var(--border);}
+.plan-btn-ghost:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);}
+
+/* HOW */
+.how-section{padding:100px 64px;background:var(--dark);}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;margin-top:64px;position:relative;}
+.how-steps::before{content:'';position:absolute;top:28px;left:calc(12.5% + 12px);right:calc(12.5% + 12px);height:1px;background:linear-gradient(90deg,transparent,var(--border),var(--border),transparent);}
+.how-step{text-align:center;}
+.step-circle{width:56px;height:56px;border-radius:50%;background:var(--panel);border:1px solid rgba(29,110,245,0.3);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);margin:0 auto 20px;position:relative;z-index:1;}
+.step-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin-bottom:10px;}
+.step-desc{font-size:13px;line-height:1.6;color:var(--slate);}
+
+/* TESTIMONIALS */
+.testi-section{padding:100px 64px;}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px;}
+.testi-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;}
+.testi-stars{font-size:13px;color:var(--gold);margin-bottom:16px;letter-spacing:2px;}
+.testi-quote{font-size:14px;line-height:1.75;color:rgba(255,255,255,0.65);margin-bottom:20px;font-style:italic;}
+.testi-author{display:flex;align-items:center;gap:12px;}
+.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:#fff;}
+.testi-name{font-weight:600;font-size:14px;color:var(--white);}
+.testi-role{font-size:12px;color:var(--slate);}
+
+/* CTA */
+.cta-section{padding:100px 64px;text-align:center;position:relative;overflow:hidden;}
+.cta-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d1a3a 0%,#0f1520 40%,#0d1a3a 100%);}
+.cta-glow{position:absolute;width:600px;height:400px;background:radial-gradient(ellipse,rgba(29,110,245,0.2) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);}
+.cta-inner{position:relative;z-index:1;max-width:700px;margin:0 auto;}
+.cta-h{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(48px,6vw,84px);line-height:0.9;text-transform:uppercase;letter-spacing:-1px;margin-bottom:20px;}
+.cta-h .accent{color:var(--cyan);}
+.cta-p{font-size:17px;color:var(--slate);line-height:1.65;margin-bottom:40px;}
+.cta-note{margin-top:20px;font-family:'Space Mono',monospace;font-size:11px;color:var(--slate);letter-spacing:1px;}
+
+/* FOOTER */
+footer{background:var(--black);border-top:1px solid var(--border);padding:60px 64px 40px;}
+.footer-grid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;}
+.footer-brand p{font-size:13px;color:var(--slate);line-height:1.7;margin-top:14px;max-width:260px;}
+.footer-col h4{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
+.footer-col a{display:block;color:rgba(255,255,255,0.4);font-size:13px;text-decoration:none;margin-bottom:10px;transition:color 0.2s;}
+.footer-col a:hover{color:var(--white);}
+.footer-bottom{max-width:1140px;margin:40px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,0.2);}
+.flag-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:10px;color:var(--slate);letter-spacing:1px;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:none;}
+
+@media(max-width:900px){
+  .nav{padding:16px 24px;}.nav-links{display:none;}
+  .hero{padding:120px 24px 60px;}
+  .hero-stats{flex-direction:column;}
+  .hstat{border-right:none;border-bottom:1px solid var(--border);}
+  .levels-section,.features-section,.compare-section,.pricing-section,.how-section,.testi-section,.cta-section,.preview-section{padding:72px 24px;}
+  .levels-grid,.pricing-grid,.testi-grid{grid-template-columns:1fr;}
+  .features-layout{grid-template-columns:1fr;}
+  .feature-showcase{display:none;}
+  .how-steps{grid-template-columns:1fr 1fr;}.how-steps::before{display:none;}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:40px;}
+  .preview-body{grid-template-columns:1fr;}
+  .preview-sidebar{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <div class="logo-mark"><span>T</span></div>
+    <div class="logo-text">Turf<em>Runner</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#levels">All Levels</a>
+    <a href="#compare">Compare</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#how">How It Works</a>
+  </div>
+  <div class="nav-right">
+    <a href="turfrunner_platform.html" class="nav-login">Log In</a>
+    <a href="turfrunner_platform.html" class="nav-cta">Start Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-eyebrow"><span class="eyebrow-pulse"></span>AI-Powered Political Canvassing · USA & Canada</div>
+  <h1>
+    <span class="line1">Win Every</span>
+    <span class="line2">Door.</span>
+    <span class="line3">Win Every Race.</span>
+  </h1>
+  <p class="hero-sub">TurfRunner is the <strong>AI-powered canvassing platform</strong> built for campaigns at every level — school board to Senate. Real-time data. Smart briefings. No app download needed.</p>
+  <div class="hero-btns">
+    <a href="turfrunner_platform.html" class="btn-xl-primary">Start Free Trial →</a>
+    <a href="#features" class="btn-xl-ghost">See All Features</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-num">All Levels</div><div class="hstat-label">School Board → Senate</div></div>
+    <div class="hstat"><div class="hstat-num">USA + 🍁</div><div class="hstat-label">US & Canadian Elections</div></div>
+    <div class="hstat"><div class="hstat-num">3 min</div><div class="hstat-label">Campaign Setup</div></div>
+    <div class="hstat"><div class="hstat-num">AI</div><div class="hstat-label">Built-in Intelligence</div></div>
+    <div class="hstat"><div class="hstat-num">0</div><div class="hstat-label">App Downloads Needed</div></div>
+  </div>
+</section>
+
+<!-- APP PREVIEW -->
+<section class="preview-section reveal">
+  <div class="inner">
+    <div class="preview-frame">
+      <div class="preview-bar">
+        <div class="pb-dot" style="background:#ff5f57"></div>
+        <div class="pb-dot" style="background:#ffbd2e"></div>
+        <div class="pb-dot" style="background:#28c840"></div>
+        <div style="flex:1;text-align:center;font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,0.2)">app.turfrunner.com — Campaign HQ</div>
+      </div>
+      <div class="preview-body">
+        <div class="preview-sidebar">
+          <div class="ps-logo"><div class="ps-logo-inner">TurfRunner</div></div>
+          <div class="ps-item active"><div class="ps-dot" style="background:var(--cyan)"></div>Dashboard</div>
+          <div class="ps-item"><div class="ps-dot" style="background:var(--green)"></div>Field Log</div>
+          <div class="ps-item"><div class="ps-dot" style="background:var(--gold)"></div>Visits</div>
+          <div class="ps-item"><div class="ps-dot" style="background:var(--blue)"></div>Map</div>
+          <div class="ps-item"><div class="ps-dot" style="background:#a78bfa"></div>Policies</div>
+          <div class="ps-item"><div class="ps-dot" style="background:var(--slate)"></div>Settings</div>
+        </div>
+        <div class="preview-main">
+          <div class="pm-stats">
+            <div class="pm-stat"><div class="pm-stat-n" style="color:var(--cyan)">347</div><div class="pm-stat-l">Doors Knocked</div></div>
+            <div class="pm-stat"><div class="pm-stat-n" style="color:var(--green)">71%</div><div class="pm-stat-l">Answer Rate</div></div>
+            <div class="pm-stat"><div class="pm-stat-n" style="color:var(--gold)">58</div><div class="pm-stat-l">Undecided</div></div>
+            <div class="pm-stat"><div class="pm-stat-n" style="color:var(--red)">14</div><div class="pm-stat-l">Follow-Ups</div></div>
+          </div>
+          <div class="pm-row">
+            <div class="pm-card">
+              <div class="pm-card-title">Top Issues</div>
+              <div class="issue-bar-r"><div class="ib-label"><span>Roads & Potholes</span><span>89</span></div><div class="ib-track"><div class="ib-fill" style="width:90%;background:var(--blue)"></div></div></div>
+              <div class="issue-bar-r"><div class="ib-label"><span>Housing Cost</span><span>71</span></div><div class="ib-track"><div class="ib-fill" style="width:72%;background:#8b5cf6"></div></div></div>
+              <div class="issue-bar-r"><div class="ib-label"><span>Public Safety</span><span>54</span></div><div class="ib-track"><div class="ib-fill" style="width:55%;background:var(--gold)"></div></div></div>
+              <div class="issue-bar-r"><div class="ib-label"><span>Property Tax</span><span>43</span></div><div class="ib-track"><div class="ib-fill" style="width:44%;background:var(--green)"></div></div></div>
+            </div>
+            <div class="pm-card">
+              <div class="pm-card-title">Support Breakdown</div>
+              <div class="sup-row"><div class="sup-dot" style="background:var(--green)"></div><div class="sup-label">Strong Support</div><div class="sup-num">142</div></div>
+              <div class="sup-row"><div class="sup-dot" style="background:var(--blue)"></div><div class="sup-label">Leaning</div><div class="sup-num">87</div></div>
+              <div class="sup-row"><div class="sup-dot" style="background:var(--gold)"></div><div class="sup-label">Undecided</div><div class="sup-num">58</div></div>
+              <div class="sup-row"><div class="sup-dot" style="background:var(--red)"></div><div class="sup-label">Against</div><div class="sup-num">31</div></div>
+              <div style="margin-top:12px;padding:10px;background:rgba(29,110,245,0.08);border:1px solid rgba(29,110,245,0.15);border-radius:6px;font-size:11px;color:rgba(255,255,255,0.5);">✨ AI: Roads are the #1 issue. Lead with your repair fund commitment this week.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALL LEVELS -->
+<section class="levels-section reveal" id="levels">
+  <div class="section-wrap">
+    <div class="section-eyebrow">Works At Every Level</div>
+    <h2 class="section-h">From <em>School Board</em><br>to The <em>Senate</em></h2>
+    <p class="section-body">TurfRunner scales with you. The same platform that powers a first-time city council candidate works for statewide and federal campaigns. One tool, every race.</p>
+    <div class="levels-grid">
+      <div class="level-tile">
+        <div class="level-icon">🏫</div>
+        <div class="level-name">Local Races</div>
+        <div class="level-desc">Perfect for first-time candidates. Set up in 3 minutes, share a link with your volunteers, and start knocking the same day.</div>
+        <div class="level-examples">
+          <span class="level-tag">School Board</span>
+          <span class="level-tag">City Council</span>
+          <span class="level-tag">Mayor</span>
+          <span class="level-tag">Ward / District</span>
+        </div>
+      </div>
+      <div class="level-tile">
+        <div class="level-icon">🏛️</div>
+        <div class="level-name">State & Provincial</div>
+        <div class="level-desc">Multi-volunteer teams, territory management, volunteer leaderboards, and cross-district analytics for bigger operations.</div>
+        <div class="level-examples">
+          <span class="level-tag">State Rep</span>
+          <span class="level-tag">State Senate</span>
+          <span class="level-tag">MPP / MLA</span>
+          <span class="level-tag">Governor</span>
+        </div>
+      </div>
+      <div class="level-tile">
+        <div class="level-icon">🇺🇸</div>
+        <div class="level-name">Federal</div>
+        <div class="level-desc">Enterprise-grade multi-campaign management. Party organizations and consulting firms run dozens of campaigns from one dashboard.</div>
+        <div class="level-examples">
+          <span class="level-tag">Congress</span>
+          <span class="level-tag">Senate</span>
+          <span class="level-tag">MP / Senator</span>
+          <span class="level-tag">Party Orgs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section reveal" id="features">
+  <div class="section-wrap">
+    <div class="section-eyebrow">Platform Features</div>
+    <h2 class="section-h">Everything<br>campaigns <em>actually</em> need</h2>
+  </div>
+  <div class="section-wrap">
+    <div class="features-layout">
+      <div class="feature-list">
+        <div class="feature-item active">
+          <div class="fi-icon" style="background:rgba(29,110,245,0.15)">🚪</div>
+          <div><div class="fi-name">Door Contact Logger</div><div class="fi-desc">Log every knock in seconds on any phone — no app download. Name, address, support level, issues, notes. Syncs live to HQ.</div></div>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(0,212,255,0.1)">🎙️</div>
+          <div><div class="fi-name">Voice Notes</div><div class="fi-desc">Tap mic, speak, done. Auto-transcribes into the notes field. Saves time at every door.</div><span class="fi-badge badge-unique">Unique</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(139,92,246,0.15)">✨</div>
+          <div><div class="fi-name">AI Campaign Briefings</div><div class="fi-desc">After every session, AI analyzes all field data and writes a strategic briefing — top issues, support picture, and a specific recommendation for this week.</div><span class="fi-badge badge-unique">Unique</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(245,166,35,0.12)">🤖</div>
+          <div><div class="fi-name">AI Conversation Coach</div><div class="fi-desc">Before knocking, volunteers see what the last visit found and an AI-suggested opening approach tailored to that resident's known concerns.</div><span class="fi-badge badge-new">New</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(34,197,94,0.12)">🗺️</div>
+          <div><div class="fi-name">Live Canvass Map</div><div class="fi-desc">Every contact plotted on a real map, color-coded by support level. HQ sees coverage in real time.</div></div>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(239,68,68,0.12)">📋</div>
+          <div><div class="fi-name">Policy Hub</div><div class="fi-desc">Your candidate's entire platform, searchable at the door. Every volunteer sounds prepared for every question.</div><span class="fi-badge badge-unique">Unique</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(14,165,233,0.12)">🏠</div>
+          <div><div class="fi-name">Visit Manager</div><div class="fi-desc">Full picture of every door: answered, not home, DND. Answer rate. Volunteer leaderboard. Street-level coverage.</div></div>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(168,85,247,0.12)">📡</div>
+          <div><div class="fi-name">Offline Mode</div><div class="fi-desc">No signal? No problem. Saves locally and syncs the moment you're back online. Never lose a contact.</div><span class="fi-badge badge-new">New</span></div>
+        </div>
+      </div>
+      <div class="feature-showcase">
+        <div class="showcase-card">
+          <div class="sc-title">✨ AI Campaign Briefings</div>
+          <div class="sc-body">After your team finishes knocking, TurfRunner's AI analyzes every contact, identifies the top community concerns, reads your support numbers, and writes a direct strategic briefing — telling you exactly what to say and who to target this week.</div>
+          <div class="sc-visual">✨</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="compare-section reveal" id="compare">
+  <div class="section-wrap">
+    <div class="section-eyebrow">How We Compare</div>
+    <h2 class="section-h">The honest<br><em>comparison</em></h2>
+    <p class="section-body">Every other platform was built for one party, one country, or one level of government. TurfRunner was built for everyone.</p>
+    <div class="compare-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Feature</th>
+            <th class="ours">TurfRunner ✦</th>
+            <th>NGP VAN</th>
+            <th>Ecanvasser</th>
+            <th>JustCanvass</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Works US + Canada</td><td class="ours"><span class="chk">✓</span></td><td><span class="prt">US Only</span></td><td><span class="prt">Partial</span></td><td><span class="prt">CA Only</span></td></tr>
+          <tr><td>All campaign levels</td><td class="ours"><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="prt">Municipal</span></td></tr>
+          <tr><td>AI Campaign Briefings</td><td class="ours"><span class="chk">✓</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td></tr>
+          <tr><td>Voice Note Transcription</td><td class="ours"><span class="chk">✓</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td></tr>
+          <tr><td>AI Conversation Coach</td><td class="ours"><span class="chk">✓</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td></tr>
+          <tr><td>Policy Hub at the door</td><td class="ours"><span class="chk">✓</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td></tr>
+          <tr><td>No app download required</td><td class="ours"><span class="chk">✓</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td><td><span class="prt">Partial</span></td></tr>
+          <tr><td>Offline Mode</td><td class="ours"><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="chk">✓</span></td><td><span class="prt">Partial</span></td></tr>
+          <tr><td>Setup under 5 minutes</td><td class="ours"><span class="chk">✓</span></td><td><span class="crs">–</span></td><td><span class="crs">–</span></td><td><span class="prt">Partial</span></td></tr>
+          <tr><td>Starting price</td><td class="ours" style="color:var(--gold);font-weight:700;font-family:'Barlow Condensed',sans-serif;font-size:15px;">$99/campaign</td><td>Custom</td><td>$49/user/mo</td><td>Not public</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section reveal" id="how">
+  <div class="section-wrap" style="text-align:center">
+    <div class="section-eyebrow">How It Works</div>
+    <h2 class="section-h">Live in <em>minutes</em></h2>
+    <div class="how-steps">
+      <div class="how-step"><div class="step-circle">01</div><div class="step-title">Create Campaign</div><div class="step-desc">Sign up, name your campaign, set your ward or district. Add platform policies. Takes 3 minutes.</div></div>
+      <div class="how-step"><div class="step-circle">02</div><div class="step-title">Invite Team</div><div class="step-desc">Send a link. Volunteers log in with Google — no app download, no IT setup, no friction.</div></div>
+      <div class="how-step"><div class="step-circle">03</div><div class="step-title">Start Knocking</div><div class="step-desc">Every contact logged in seconds. Voice notes, issue tags, support level — synced live to HQ.</div></div>
+      <div class="how-step"><div class="step-circle">04</div><div class="step-title">Win With Data</div><div class="step-desc">AI briefings show what the community cares about. Target your message. Win your race.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section reveal" id="pricing">
+  <div class="section-wrap" style="text-align:center">
+    <div class="section-eyebrow">Simple Pricing</div>
+    <h2 class="section-h">Pay per campaign,<br><em>not per volunteer</em></h2>
+    <p style="color:var(--slate);font-size:15px;margin-top:14px;">Unlimited volunteers on every plan. No per-user fees. No hidden charges.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-tier">Starter</div>
+        <div class="plan-price-wrap"><div class="plan-price">$99<span>/mo</span></div></div>
+        <div class="plan-period">per campaign</div>
+        <div class="plan-desc">First-time candidates, school board, and local races</div>
+        <ul class="plan-features">
+          <li>Unlimited volunteers</li>
+          <li>Door contact logging</li>
+          <li>Live HQ dashboard</li>
+          <li>Visit Manager</li>
+          <li>Policy Hub</li>
+          <li>CSV export</li>
+          <li>Basic map view</li>
+        </ul>
+        <a href="turfrunner_platform.html" class="plan-btn plan-btn-ghost">Get Started</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="feat-badge">Most Popular</div>
+        <div class="plan-tier">Campaign</div>
+        <div class="plan-price-wrap"><div class="plan-price">$249<span>/mo</span></div></div>
+        <div class="plan-period">per campaign</div>
+        <div class="plan-desc">Serious candidates who want every advantage</div>
+        <ul class="plan-features">
+          <li>Everything in Starter</li>
+          <li>AI campaign briefings</li>
+          <li>Voice note transcription</li>
+          <li>AI conversation coach</li>
+          <li>Google Maps integration</li>
+          <li>Google Sheets sync</li>
+          <li>Offline mode</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="turfrunner_platform.html" class="plan-btn plan-btn-primary">Start Free Trial</a>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-tier">Organization</div>
+        <div class="plan-price-wrap"><div class="plan-price">$599<span>/mo</span></div></div>
+        <div class="plan-period">up to 20 campaigns</div>
+        <div class="plan-desc">Parties, consultants, and multi-candidate operations</div>
+        <ul class="plan-features">
+          <li>Up to 20 campaigns</li>
+          <li>Everything in Campaign</li>
+          <li>Cross-campaign analytics</li>
+          <li>White-label branding</li>
+          <li>Dedicated onboarding</li>
+          <li>Affiliate dashboard</li>
+          <li>API access + SLA</li>
+        </ul>
+        <a href="turfrunner_platform.html" class="plan-btn plan-btn-ghost">Contact Sales</a>
+      </div>
+    </div>
+    <div style="margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <span class="flag-badge">🇺🇸 US Campaigns Supported</span>
+      <span class="flag-badge">🍁 Canadian Campaigns Supported</span>
+      <span class="flag-badge">🔒 SOC 2 Compliant</span>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section reveal">
+  <div class="section-wrap">
+    <div class="section-eyebrow">From The Field</div>
+    <h2 class="section-h">Campaigns are<br><em>winning</em></h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"We knocked 800+ doors in three weeks. The AI briefing told us roads were the #1 issue after day one — we changed our entire messaging and won by 400 votes. TurfRunner made the difference."</p>
+        <div class="testi-author"><div class="testi-avatar">M</div><div><div class="testi-name">Marcus T.</div><div class="testi-role">Ward Councillor, Hamilton ON</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"My volunteers are seniors who aren't tech-savvy. TurfRunner worked on the first try on every phone. The voice note feature alone saved us hours of typing every day."</p>
+        <div class="testi-author"><div class="testi-avatar">S</div><div><div class="testi-name">Sandra R.</div><div class="testi-role">School Trustee, Mississauga ON</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I manage 6 campaigns across 3 cities. The Organization plan lets me see everything from one place. The Policy Hub alone saves 2 hours of prep per campaign per week."</p>
+        <div class="testi-author"><div class="testi-avatar">D</div><div><div class="testi-name">David K.</div><div class="testi-role">Political Consultant, Ontario</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <div class="cta-bg"></div>
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <h2 class="cta-h">Your campaign<br>starts <span class="accent">here.</span></h2>
+    <p class="cta-p">14 days free. No credit card. No app download. Just your team, your turf, and the tools to win.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <a href="turfrunner_platform.html" class="btn-xl-primary">Start Free Trial →</a>
+      <a href="#" class="btn-xl-ghost">Book a Demo</a>
+    </div>
+    <div class="cta-note">🇺🇸 United States · 🍁 Canada · All campaign levels · All election types</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="text-decoration:none">
+        <div class="logo-mark"><span>T</span></div>
+        <div class="logo-text">Turf<em>Runner</em></div>
+      </a>
+      <p>The AI-powered canvassing platform for campaigns at every level — school board to Senate, across the US and Canada.</p>
+    </div>
+    <div class="footer-col"><h4>Product</h4><a href="#">Features</a><a href="#">Pricing</a><a href="#">Roadmap</a><a href="#">Security</a></div>
+    <div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Press</a></div>
+    <div class="footer-col"><h4>Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Data Security</a><a href="#">Compliance</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 TurfRunner Inc. All rights reserved.</span>
+    <div style="display:flex;gap:12px;">
+      <span class="flag-badge">🇺🇸 US</span>
+      <span class="flag-badge">🍁 CA</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+document.querySelectorAll('.feature-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.feature-item').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+    const name = this.querySelector('.fi-name').textContent;
+    const desc = this.querySelector('.fi-desc').textContent;
+    const icon = this.querySelector('.fi-icon').textContent;
+    const showcase = document.querySelector('.showcase-card');
+    showcase.querySelector('.sc-title').textContent = icon + ' ' + name;
+    showcase.querySelector('.sc-body').textContent = desc;
+    showcase.querySelector('.sc-visual').textContent = icon;
+  });
+});
+</script>
+</body>
+</html>

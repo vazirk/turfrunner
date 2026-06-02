@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurfRunner — Campaign Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js"></script>
+
+<style>
+/* ═══ DESIGN TOKENS ═══ */
+:root {
+  --black:#080b10; --dark:#0f1520; --panel:#141c2a; --card:#1a2436;
+  --card2:#1f2b3d; --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --blue:#1d6ef5; --bluem:#1558c8; --cyan:#00d4ff; --gold:#f5a623;
+  --goldl:#ffc654; --red:#e63946; --green:#22c55e; --orange:#f97316;
+  --purple:#8b5cf6; --slate:#94a3b8; --white:#f0f4ff; --text:rgba(240,244,255,0.75);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;color:var(--white);overflow-x:hidden;}
+
+/* ═══ LOGIN ═══ */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;position:fixed;inset:0;z-index:1000;
+  background:radial-gradient(ellipse at 50% 40%,#0d1f3c 0%,#080b10 70%);
+}
+.login-box{
+  text-align:center;padding:52px 48px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border2);border-radius:20px;
+  backdrop-filter:blur(24px);max-width:440px;width:92%;
+  animation:fadeUp 0.5s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.login-logo-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:28px;}
+.login-logo-mark{width:48px;height:48px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:#fff;box-shadow:0 0 30px rgba(29,110,245,0.4);}
+.login-logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
+.login-logo-text em{color:var(--cyan);font-style:normal;}
+.login-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--white);margin-bottom:6px;letter-spacing:0.5px;}
+.login-sub{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:28px;}
+.login-desc{color:var(--slate);font-size:13px;margin-bottom:28px;line-height:1.6;}
+#google-signin-btn{display:inline-block;}
+.login-error{margin-top:16px;background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.3);color:#f87171;border-radius:8px;padding:10px 16px;font-size:13px;display:none;}
+.login-error.show{display:block;}
+.demo-btn{margin-top:14px;width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid var(--border2);border-radius:8px;color:var(--slate);font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.demo-btn:hover{background:rgba(255,255,255,0.09);color:var(--white);}
+
+/* ═══ APP SHELL ═══ */
+#app{display:none;min-height:100vh;display:none;flex-direction:column;}
+.topbar{
+  height:56px;background:var(--panel);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;position:sticky;top:0;z-index:100;flex-shrink:0;
+}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.tb-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.tb-logo-mark{width:30px;height:30px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff;}
+.tb-logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
+.tb-logo-text em{color:var(--cyan);font-style:normal;}
+.tb-campaign-badge{background:rgba(29,110,245,0.15);border:1px solid rgba(29,110,245,0.25);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--cyan);letter-spacing:0.5px;cursor:pointer;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-user{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border-radius:20px;padding:5px 12px 5px 5px;}
+.tb-avatar{width:26px;height:26px;border-radius:50%;background:var(--blue);object-fit:cover;}
+.tb-name{font-size:12px;font-weight:600;color:var(--white);}
+.tb-signout{background:none;border:none;cursor:pointer;color:var(--slate);font-size:18px;padding:0;line-height:1;transition:color 0.2s;}
+.tb-signout:hover{color:var(--white);}
+
+/* ═══ MAIN LAYOUT ═══ */
+.app-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px);}
+.sidebar{
+  width:220px;background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.sidebar-section{padding:8px 0;}
+.sidebar-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);padding:8px 18px 4px;opacity:0.6;}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;padding:9px 18px;
+  font-size:13px;font-weight:500;color:var(--slate);cursor:pointer;
+  transition:all 0.15s;border-left:2px solid transparent;
+  user-select:none;
+}
+.sidebar-item:hover{color:var(--white);background:rgba(255,255,255,0.04);}
+.sidebar-item.active{color:var(--cyan);background:rgba(29,110,245,0.1);border-left-color:var(--cyan);}
+.sidebar-icon{font-size:15px;flex-shrink:0;}
+.sidebar-badge{margin-left:auto;background:var(--blue);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 7px;}
+.sidebar-footer{margin-top:auto;padding:14px;border-top:1px solid var(--border);}
+.sidebar-footer-text{font-size:10px;color:var(--slate);text-align:center;line-height:1.5;}
+
+/* ═══ CONTENT ═══ */
+.content{flex:1;overflow-y:auto;padding:24px;background:var(--dark);}
+.view{display:none;}.view.active{display:block;}
+
+/* ═══ SHARED COMPONENTS ═══ */
+.page-header{
+  background:linear-gradient(135deg,var(--panel),var(--card));
+  border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ph-left h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:var(--white);}
+.ph-left p{font-size:12px;color:var(--slate);margin-top:2px;}
+.ph-right{display:flex;gap:8px;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.card-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+.btn{padding:8px 18px;border-radius:7px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:var(--bluem);}
+.btn-ghost{background:rgba(255,255,255,0.05);color:var(--white);border:1px solid var(--border2);}.btn-ghost:hover{background:rgba(255,255,255,0.09);}
+.btn-gold{background:var(--gold);color:#000;}.btn-gold:hover{background:var(--goldl);}
+.btn-sm{padding:5px 12px;font-size:11px;}
+.btn-danger{background:rgba(230,57,70,0.15);color:var(--red);border:1px solid rgba(230,57,70,0.25);}.btn-danger:hover{background:rgba(230,57,70,0.25);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 14px;text-align:center;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;line-height:1;color:var(--white);}
+.stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--slate);margin-top:4px;}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.form-group.full{grid-column:1/-1;}
+label.fl{font-size:11px;font-weight:600;color:var(--slate);letter-spacing:0.3px;text-transform:uppercase;}
+input[type=text],input[type=tel],input[type=email],textarea,select{
+  padding:9px 13px;background:var(--panel);border:1px solid var(--border2);
+  border-radius:7px;font-family:'Barlow',sans-serif;font-size:13px;
+  color:var(--white);outline:none;transition:border-color 0.2s;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,110,245,0.12);}
+textarea{resize:vertical;min-height:72px;}
+select option{background:var(--panel);}
+
+/* DOOR BTNS */
+.door-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.door-btn{padding:10px 6px;border-radius:8px;border:1.5px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;text-align:center;transition:all 0.18s;color:var(--slate);}
+.door-btn:hover{border-color:rgba(255,255,255,0.25);color:var(--white);}
+.door-btn.door-sel{border-color:var(--blue);background:rgba(29,110,245,0.15);color:var(--cyan);}
+
+/* SUPPORT BTNS */
+.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.support-btn{padding:10px 8px;border-radius:8px;border:1.5px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;text-align:center;transition:all 0.18s;color:var(--slate);}
+.support-btn.sel-strong{border-color:var(--green);background:rgba(34,197,94,0.12);color:var(--green);}
+.support-btn.sel-lean{border-color:var(--blue);background:rgba(29,110,245,0.12);color:#93c5fd;}
+.support-btn.sel-undecided{border-color:var(--gold);background:rgba(245,166,35,0.1);color:var(--gold);}
+.support-btn.sel-against{border-color:var(--red);background:rgba(230,57,70,0.1);color:var(--red);}
+
+/* ISSUE TAGS */
+.issues-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.issue-tag{padding:5px 11px;border-radius:5px;border:1px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;font-size:11px;font-weight:600;color:var(--slate);transition:all 0.15s;user-select:none;letter-spacing:0.3px;}
+.issue-tag:hover{border-color:rgba(255,255,255,0.2);color:var(--white);}
+.issue-tag.selected{border-color:var(--blue);background:rgba(29,110,245,0.15);color:var(--cyan);}
+
+/* VOICE */
+.voice-row{display:flex;gap:10px;align-items:flex-start;}
+.voice-row textarea{flex:1;}
+.voice-btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;background:var(--blue);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;box-shadow:0 2px 8px rgba(29,110,245,0.3);}
+.voice-btn:hover{background:var(--bluem);transform:scale(1.06);}
+.voice-btn.recording{background:var(--red);animation:vpulse 1.2s infinite;}
+@keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(230,57,70,0.5)}70%{box-shadow:0 0 0 10px rgba(230,57,70,0)}100%{box-shadow:0 0 0 0 rgba(230,57,70,0)}}
+.voice-hint{font-size:10px;color:var(--slate);margin-top:4px;text-align:center;}
+
+/* SUBMIT BTN */
+.submit-btn{width:100%;padding:14px;background:var(--gold);color:#000;border:none;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:6px;}
+.submit-btn:hover{background:var(--goldl);transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,0.3);}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* BANNERS */
+.success-banner{display:none;background:linear-gradient(135deg,#166534,#15803d);color:#fff;border-radius:10px;padding:14px 18px;text-align:center;margin-bottom:14px;font-weight:600;font-size:14px;}
+.success-banner.show{display:block;animation:pop 0.3s ease;}
+@keyframes pop{from{transform:scale(0.96);opacity:0}to{transform:scale(1);opacity:1}}
+.sync-status{font-size:11px;text-align:center;padding:5px;color:var(--slate);font-style:italic;}
+.sync-status.syncing{color:var(--gold);}.sync-status.synced{color:var(--green);}.sync-status.error{color:var(--red);}
+
+/* ISSUE BARS */
+.issue-bar-row{margin-bottom:10px;}
+.issue-bar-label{display:flex;justify-content:space-between;font-size:12px;font-weight:500;margin-bottom:4px;color:var(--text);}
+.issue-bar-track{background:rgba(255,255,255,0.07);border-radius:3px;height:8px;overflow:hidden;}
+.issue-bar-fill{height:100%;background:var(--blue);border-radius:3px;transition:width 0.6s ease;}
+
+/* SUPPORT BREAKDOWN */
+.support-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.sb-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.sb-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.sb-label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:0.5px;}
+.sb-count{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--white);}
+
+/* AI CARD */
+.ai-card{background:linear-gradient(135deg,var(--panel),var(--card));border:1px solid rgba(29,110,245,0.25);border-radius:12px;padding:20px;margin-bottom:18px;}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(29,110,245,0.2);border:1px solid rgba(29,110,245,0.3);border-radius:5px;padding:3px 10px;font-family:'Space Mono',monospace;font-size:9px;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;}
+.ai-text{font-size:13px;line-height:1.7;color:var(--text);min-height:60px;}
+.ai-refresh-btn{margin-top:12px;padding:7px 16px;background:rgba(29,110,245,0.12);color:var(--cyan);border:1px solid rgba(29,110,245,0.25);border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.ai-refresh-btn:hover{background:rgba(29,110,245,0.22);}
+.typing::after{content:'▊';animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ENTRIES */
+.filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-chip{padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--slate);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
+.filter-chip.active{background:rgba(29,110,245,0.15);border-color:rgba(29,110,245,0.4);color:var(--cyan);}
+
+.entry-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;animation:slideIn 0.2s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.sup-dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.dot-strong{background:var(--green)}.dot-lean{background:var(--blue)}.dot-undecided{background:var(--gold)}.dot-against{background:var(--red)}.dot-def{background:var(--slate)}
+.entry-name{font-weight:700;font-size:14px;color:var(--white);}
+.entry-addr{font-size:11px;color:var(--slate);margin-top:2px;}
+.entry-issues{margin-top:5px;display:flex;flex-wrap:wrap;gap:4px;}
+.etag{padding:2px 7px;border-radius:4px;background:rgba(255,255,255,0.07);font-size:10px;font-weight:600;color:var(--slate);}
+.entry-notes{font-size:11px;color:rgba(255,255,255,0.4);margin-top:5px;font-style:italic;}
+.entry-meta{font-size:10px;color:var(--slate);text-align:right;white-space:nowrap;line-height:1.7;}
+.fu-badge{display:inline-block;background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.25);border-radius:4px;font-size:9px;font-weight:700;padding:2px 7px;margin-top:4px;letter-spacing:0.5px;text-transform:uppercase;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--slate);font-size:13px;}
+
+/* VISITS */
+.vli{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.pill{padding:4px 9px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.pill-ans{background:rgba(34,197,94,0.15);color:var(--green);}
+.pill-nh{background:rgba(249,115,22,0.15);color:var(--orange);}
+.pill-dnd{background:rgba(230,57,70,0.15);color:var(--red);}
+.vli-addr{font-weight:700;font-size:13px;color:var(--white);}
+.vli-meta{font-size:11px;color:var(--slate);margin-top:2px;}
+.vli-right{margin-left:auto;text-align:right;font-size:11px;color:var(--slate);}
+
+.bar-list{display:flex;flex-direction:column;gap:8px;}
+.bar-item{display:flex;align-items:center;gap:10px;}
+.bar-name{font-size:12px;font-weight:600;width:90px;flex-shrink:0;color:var(--text);}
+.bar-track{flex:1;background:rgba(255,255,255,0.07);border-radius:3px;height:9px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.bar-count{font-size:12px;font-weight:700;width:28px;text-align:right;color:var(--slate);}
+
+.vol-table{width:100%;border-collapse:collapse;font-size:12px;}
+.vol-table th{text-align:left;padding:8px 10px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);border-bottom:1px solid var(--border);}
+.vol-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);}
+.vol-table tr:last-child td{border-bottom:none;}
+.vol-table tr:hover td{background:rgba(255,255,255,0.02);}
+.vbadge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;}
+.vbadge.g{background:rgba(34,197,94,0.15);color:var(--green);}
+.vbadge.o{background:rgba(249,115,22,0.15);color:var(--orange);}
+.vbadge.r{background:rgba(230,57,70,0.15);color:var(--red);}
+
+.search-bar{width:100%;padding:9px 14px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-family:'Barlow',sans-serif;font-size:13px;outline:none;margin-bottom:12px;}
+.search-bar::placeholder{color:var(--slate);}.search-bar:focus{border-color:var(--blue);}
+
+/* MAP */
+#map{width:100%;height:460px;border-radius:12px;overflow:hidden;}
+.map-placeholder{width:100%;height:460px;border-radius:12px;background:var(--card);border:1px dashed rgba(29,110,245,0.25);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:var(--slate);}
+.map-legend{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:12px;display:flex;gap:20px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--slate);}
+.leg-dot{width:11px;height:11px;border-radius:50%;}
+
+/* POLICY HUB */
+.policy-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.policy-head{padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background 0.15s;}
+.policy-head:hover{background:rgba(255,255,255,0.03);}
+.pcat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.policy-title-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);flex:1;}
+.pcat-pill{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;}
+.expand-ico{color:var(--slate);font-size:12px;transition:transform 0.2s;}
+.policy-card.open .expand-ico{transform:rotate(180deg);}
+.policy-body-inner{padding:0 18px 18px;display:none;}
+.policy-card.open .policy-body-inner{display:block;}
+.policy-body-txt{font-size:13px;line-height:1.75;color:var(--text);white-space:pre-wrap;}
+.policy-acts{display:flex;gap:8px;margin-top:14px;}
+.ptag{display:inline-block;background:rgba(255,255,255,0.07);color:var(--slate);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-right:4px;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;}
+
+.quick-ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.qr-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all 0.18s;}
+.qr-item:hover{border-color:rgba(29,110,245,0.35);background:rgba(29,110,245,0.06);}
+.qr-item-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);margin-bottom:2px;}
+.qr-item-sub{font-size:10px;color:var(--slate);}
+
+.policy-search{width:100%;padding:9px 14px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-family:'Barlow',sans-serif;font-size:13px;outline:none;}
+.policy-search::placeholder{color:var(--slate);}.policy-search:focus{border-color:var(--blue);}
+
+.policy-cats{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;}
+.pcat-btn{padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--slate);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
+.pcat-btn.active{background:rgba(29,110,245,0.15);border-color:rgba(29,110,245,0.4);color:var(--cyan);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;max-width:540px;width:92%;max-height:90vh;overflow-y:auto;animation:fadeUp 0.25s ease;}
+.modal h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin-bottom:20px;}
+.modal-acts{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+.modal-field{margin-bottom:14px;}
+.modal-field label{font-size:11px;font-weight:600;color:var(--slate);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.modal input,.modal textarea,.modal select{width:100%;}
+.modal textarea{min-height:120px;}
+
+/* CAT COLORS */
+.cat-housing{background:rgba(29,110,245,0.12);color:#93c5fd;}.dot-housing{background:#60a5fa;}
+.cat-roads{background:rgba(249,115,22,0.12);color:var(--orange);}.dot-roads{background:var(--orange);}
+.cat-safety{background:rgba(230,57,70,0.12);color:var(--red);}.dot-safety{background:var(--red);}
+.cat-seniors{background:rgba(139,92,246,0.12);color:var(--purple);}.dot-seniors{background:var(--purple);}
+.cat-environment{background:rgba(34,197,94,0.12);color:var(--green);}.dot-environment{background:var(--green);}
+.cat-taxes{background:rgba(245,166,35,0.12);color:var(--gold);}.dot-taxes{background:var(--gold);}
+.cat-general{background:rgba(148,163,184,0.12);color:var(--slate);}.dot-general{background:var(--slate);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{width:56px;}
+  .sidebar-item span,.sidebar-label,.sidebar-badge{display:none;}
+  .sidebar-item{justify-content:center;padding:12px;}
+  .grid-2,.grid-3,.grid-4,.grid-5,.support-breakdown{grid-template-columns:1fr 1fr;}
+  .grid-5{grid-template-columns:repeat(2,1fr);}
+  .entry-card{grid-template-columns:auto 1fr;}
+  .entry-meta{display:none;}
+  .quick-ref-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo-wrap">
+      <div class="login-logo-mark">T</div>
+      <div class="login-logo-text">Turf<em>Runner</em></div>
+    </div>
+    <div class="login-title">Campaign Platform</div>
+    <div class="login-sub">Authorized Personnel Only</div>
+    <p class="login-desc">Sign in with your Google account to access your campaign dashboard. Only authorized team members can log in.</p>
+    <div id="google-signin-btn"></div>
+    <div id="login-error" class="login-error">⛔ Access denied. Your account is not authorized. Contact your campaign admin.</div>
+    <button class="demo-btn" onclick="startDemo()">▶ Continue in Demo Mode</button>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a class="tb-logo" href="#">
+        <div class="tb-logo-mark">T</div>
+        <div class="tb-logo-text">Turf<em>Runner</em></div>
+      </a>
+      <div class="tb-campaign-badge" id="campaign-badge">📍 Ward 10 · Windsor</div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-user">
+        <img id="tb-avatar" class="tb-avatar" src="" alt="">
+        <span id="tb-name" class="tb-name">Demo</span>
+        <button class="tb-signout" onclick="signOut()" title="Sign out">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Campaign</div>
+        <div class="sidebar-item active" onclick="switchView('field',this)">
+          <span class="sidebar-icon">🚪</span><span>Field Log</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('dashboard',this)">
+          <span class="sidebar-icon">📊</span><span>Dashboard</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('visits',this)">
+          <span class="sidebar-icon">🏠</span><span>Visits</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('map',this)">
+          <span class="sidebar-icon">🗺️</span><span>Map</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Strategy</div>
+        <div class="sidebar-item" onclick="switchView('policy',this)">
+          <span class="sidebar-icon">📋</span><span>Policy Hub</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('ai',this)">
+          <span class="sidebar-icon">✨</span><span>AI Briefing</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Admin</div>
+        <div class="sidebar-item" onclick="switchView('settings',this)">
+          <span class="sidebar-icon">⚙️</span><span>Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-text">TurfRunner v1.0<br>© 2025</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ── FIELD VIEW ── -->
+      <div id="view-field" class="view active">
+        <div class="page-header">
+          <div class="ph-left"><h2>🚪 Door Contact Log</h2><p>Log what you learn — syncs live to HQ dashboard</p></div>
+        </div>
+        <div id="success-banner" class="success-banner">✅ Contact logged and synced!</div>
+        <div id="sync-status" class="sync-status"></div>
+
+        <div class="grid-2" style="margin-bottom:14px;">
+          <div class="card">
+            <div class="card-title">Address & Volunteer</div>
+            <div class="form-group full">
+              <label class="fl">Street Address *</label>
+              <input type="text" id="f-address" placeholder="e.g. 142 Erie Street East">
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="fl">Volunteer Name</label>
+                <input type="text" id="f-volunteer" placeholder="Your name">
+              </div>
+              <div class="form-group">
+                <label class="fl">Date / Time</label>
+                <input type="text" id="f-datetime" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Door Status</div>
+            <div class="door-grid">
+              <button class="door-btn" onclick="selectDoor(this,'Answered')">✅ Answered</button>
+              <button class="door-btn" onclick="selectDoor(this,'Not Home')">🔔 Not Home</button>
+              <button class="door-btn" onclick="selectDoor(this,'Do Not Disturb')">🚫 DND</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="resident-section">
+          <div class="grid-2" style="margin-bottom:14px;">
+            <div class="card">
+              <div class="card-title">Resident Information</div>
+              <div class="grid-2">
+                <div class="form-group"><label class="fl">First Name</label><input type="text" id="f-first" placeholder="First name"></div>
+                <div class="form-group"><label class="fl">Last Name</label><input type="text" id="f-last" placeholder="Last name"></div>
+                <div class="form-group"><label class="fl">Phone (optional)</label><input type="tel" id="f-phone" placeholder="519-..."></div>
+                <div class="form-group"><label class="fl">Email (optional)</label><input type="email" id="f-email" placeholder="email@..."></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Support Level</div>
+              <div class="support-grid">
+                <button class="support-btn" onclick="selectSupport(this,'strong')">💪 Strong</button>
+                <button class="support-btn" onclick="selectSupport(this,'lean')">👍 Leaning</button>
+                <button class="support-btn" onclick="selectSupport(this,'undecided')">🤔 Undecided</button>
+                <button class="support-btn" onclick="selectSupport(this,'against')">👎 Against</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-title">Key Issues — select all that apply</div>
+            <div class="issues-grid">
+              <span class="issue-tag" onclick="toggleIssue(this)">Housing Affordability</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Roads & Potholes</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Public Safety</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Transit & Bus</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Property Taxes</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Seniors Services</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Youth Programs</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Parks & Green Space</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Homelessness</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Local Business</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Environment</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Development/Zoning</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Schools</span>
+              <span class="issue-tag" onclick="toggleIssue(this)">Other</span>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-title">Notes — type or use voice 🎙️</div>
+            <div class="voice-row">
+              <textarea id="f-notes" placeholder="What did they say? Be specific — goes directly to HQ..."></textarea>
+              <div>
+                <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Tap to record voice note">🎙️</button>
+                <div class="voice-hint" id="voice-status">Tap mic</div>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-top:12px;">
+              <div class="form-group">
+                <label class="fl">Follow-up needed?</label>
+                <select id="f-followup">
+                  <option value="No">No follow-up needed</option>
+                  <option value="Yes - Call">Yes — Call back</option>
+                  <option value="Yes - Email">Yes — Send email</option>
+                  <option value="Yes - Info">Yes — Send info package</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="fl">Volunteer sign-up interest?</label>
+                <select id="f-vol-interest">
+                  <option value="No">Not interested</option>
+                  <option value="Maybe">Maybe</option>
+                  <option value="Yes - Knocking">Yes — Door knocking</option>
+                  <option value="Yes - Calling">Yes — Phone banking</option>
+                  <option value="Yes - Signs">Yes — Lawn sign</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="submit-btn" id="submit-btn" onclick="submitEntry()">📋 Log This Contact →</button>
+      </div>
+
+      <!-- ── DASHBOARD VIEW ── -->
+      <div id="view-dashboard" class="view">
+        <div class="page-header">
+          <div class="ph-left"><h2>📊 Campaign Dashboard</h2><p>Live field data from all volunteers</p></div>
+          <div class="ph-right">
+            <button class="btn btn-ghost btn-sm" onclick="refreshFromSheet()">🔄 Refresh</button>
+            <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
+          </div>
+        </div>
+
+        <div class="grid-5" style="margin-bottom:16px;">
+          <div class="stat-card"><div class="stat-num" id="s-total" style="color:var(--cyan)">0</div><div class="stat-label">Total Contacts</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-homes">0</div><div class="stat-label">Homes Visited</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-support" style="color:var(--green)">0</div><div class="stat-label">Support/Leaning</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-undecided" style="color:var(--gold)">0</div><div class="stat-label">Undecided</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-followup" style="color:var(--red)">0</div><div class="stat-label">Follow-ups</div></div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="card"><div class="card-title">Top Issues in Ward</div><div id="issue-bars"></div></div>
+          <div class="card"><div class="card-title">Door Outcomes</div><div class="bar-list" id="door-bars"></div></div>
+        </div>
+
+        <div class="support-breakdown">
+          <div class="sb-item"><div class="sb-dot" style="background:var(--green)"></div><div><div class="sb-label">Strong Support</div><div class="sb-count" id="sb-strong">0</div></div></div>
+          <div class="sb-item"><div class="sb-dot" style="background:var(--blue)"></div><div><div class="sb-label">Leaning</div><div class="sb-count" id="sb-lean">0</div></div></div>
+          <div class="sb-item"><div class="sb-dot" style="background:var(--gold)"></div><div><div class="sb-label">Undecided</div><div class="sb-count" id="sb-undecided2">0</div></div></div>
+          <div class="sb-item"><div class="sb-dot" style="background:var(--red)"></div><div><div class="sb-label">Not Supporting</div><div class="sb-count" id="sb-against">0</div></div></div>
+        </div>
+
+        <div style="margin-bottom:12px;"><span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);">All Submissions</span></div>
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="filterEntries('all',this)">All</button>
+          <button class="filter-chip" onclick="filterEntries('strong',this)">Strong</button>
+          <button class="filter-chip" onclick="filterEntries('lean',this)">Leaning</button>
+          <button class="filter-chip" onclick="filterEntries('undecided',this)">Undecided</button>
+          <button class="filter-chip" onclick="filterEntries('against',this)">Against</button>
+          <button class="filter-chip" onclick="filterEntries('followup',this)">Follow-up</button>
+        </div>
+        <div id="entries-list"></div>
+      </div>
+
+      <!-- ── VISITS VIEW ── -->
+      <div id="view-visits" class="view">
+        <div class="page-header"><div class="ph-left"><h2>🏠 Visit Manager</h2><p>Every door knocked across your turf</p></div></div>
+
+        <div class="grid-5" style="margin-bottom:16px;">
+          <div class="stat-card"><div class="stat-num" id="v-total" style="color:var(--cyan)">0</div><div class="stat-label">Doors Knocked</div></div>
+          <div class="stat-card"><div class="stat-num" id="v-ans" style="color:var(--green)">0</div><div class="stat-label">Answered</div></div>
+          <div class="stat-card"><div class="stat-num" id="v-nh" style="color:var(--orange)">0</div><div class="stat-label">Not Home</div></div>
+          <div class="stat-card"><div class="stat-num" id="v-dnd" style="color:var(--red)">0</div><div class="stat-label">DND</div></div>
+          <div class="stat-card"><div class="stat-num" id="v-rate" style="color:var(--gold)">0%</div><div class="stat-label">Answer Rate</div></div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="card"><div class="card-title">By Door Outcome</div><div class="bar-list" id="v-door-bars"></div></div>
+          <div class="card"><div class="card-title">By Volunteer</div><div style="overflow-x:auto;"><table class="vol-table"><thead><tr><th>Volunteer</th><th>Doors</th><th>Answered</th><th>Rate</th></tr></thead><tbody id="v-vol-tbody"></tbody></table></div></div>
+        </div>
+
+        <input class="search-bar" id="visit-search" placeholder="🔍 Search by address or volunteer…" oninput="renderVisitList()">
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="filterVisits('all',this)">All</button>
+          <button class="filter-chip" onclick="filterVisits('Answered',this)">Answered</button>
+          <button class="filter-chip" onclick="filterVisits('Not Home',this)">Not Home</button>
+          <button class="filter-chip" onclick="filterVisits('Do Not Disturb',this)">DND</button>
+        </div>
+        <div id="visit-list"></div>
+      </div>
+
+      <!-- ── MAP VIEW ── -->
+      <div id="view-map" class="view">
+        <div class="page-header"><div class="ph-left"><h2>🗺️ Canvass Map</h2><p>All contacts plotted live by support level</p></div></div>
+        <div id="map-placeholder" class="map-placeholder">
+          <div style="font-size:48px;opacity:0.4">🗺️</div>
+          <p style="text-align:center;max-width:280px;line-height:1.5;font-size:13px;">Map activates once you add your <strong>Google Maps API key</strong> to the CONFIG block at the top of the file.</p>
+          <code style="font-size:11px;background:rgba(255,255,255,0.07);padding:4px 10px;border-radius:5px;color:var(--cyan)">MAPS_API_KEY</code>
+        </div>
+        <div id="map" style="display:none;"></div>
+        <div class="map-legend">
+          <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Strong Support</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div>Leaning</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Undecided</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Not Supporting</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--slate)"></div>Not Home / DND</div>
+        </div>
+      </div>
+
+      <!-- ── POLICY HUB VIEW ── -->
+      <div id="view-policy" class="view">
+        <div class="page-header">
+          <div class="ph-left"><h2>📋 Policy Hub</h2><p>Your platform at your fingertips — answers for every doorstep question</p></div>
+          <div class="ph-right"><button class="btn btn-gold btn-sm" onclick="openPolicyModal(null)">+ Add Policy</button></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">⚡ Quick Reference</div>
+          <div class="quick-ref-grid" id="qr-grid"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;">
+          <input class="policy-search" id="policy-search" placeholder="🔍 Search policies…" oninput="renderPolicies()">
+        </div>
+        <div class="policy-cats" id="policy-cats"></div>
+        <div id="policy-list"></div>
+      </div>
+
+      <!-- ── AI BRIEFING VIEW ── -->
+      <div id="view-ai" class="view">
+        <div class="page-header"><div class="ph-left"><h2>✨ AI Briefing</h2><p>Strategic intelligence from your field data</p></div></div>
+
+        <div class="ai-card">
+          <div class="ai-badge">✨ AI Campaign Strategist</div>
+          <div id="ai-briefing" class="ai-text">Click "Generate Briefing" to get an AI-powered strategic summary of community concerns, support picture, and a specific recommendation for this week's messaging.</div>
+          <button class="ai-refresh-btn" onclick="loadAIBriefing()">⚡ Generate Briefing</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🤖 AI Conversation Coach — Next Door to Knock</div>
+          <div id="ai-coach" style="font-size:13px;line-height:1.7;color:var(--text);">Select a specific entry from the Dashboard to get an AI-generated conversation approach tailored to that resident's known concerns and history.</div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <div class="card-title">📊 Campaign Intelligence Summary</div>
+          <div id="ai-summary" style="font-size:13px;color:var(--slate);">Generate a briefing above to see your campaign's intelligence summary.</div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS VIEW ── -->
+      <div id="view-settings" class="view">
+        <div class="page-header"><div class="ph-left"><h2>⚙️ Campaign Settings</h2><p>Configure your TurfRunner campaign</p></div></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Campaign Info</div>
+            <div class="form-group"><label class="fl">Campaign Name</label><input type="text" id="set-campaign-name" placeholder="e.g. Adam for Ward 10"></div>
+            <div class="form-group"><label class="fl">Candidate Name</label><input type="text" id="set-candidate" placeholder="Candidate name"></div>
+            <div class="form-group"><label class="fl">Ward / District / Riding</label><input type="text" id="set-ward" placeholder="e.g. Ward 10, Windsor"></div>
+            <div class="form-group">
+              <label class="fl">Campaign Level</label>
+              <select id="set-level">
+                <option>School Board</option><option>City Council / Ward</option><option>Mayor</option>
+                <option>State / Provincial Rep</option><option>State / Provincial Senate</option>
+                <option>Governor / Premier</option><option>US Congress</option><option>US Senate</option>
+                <option>Canadian MP / Senator</option><option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="fl">Country</label>
+              <select id="set-country"><option>Canada</option><option>United States</option></select>
+            </div>
+            <button class="btn btn-primary" onclick="saveCampaignSettings()" style="margin-top:6px;">Save Settings</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Google Integration</div>
+            <div class="form-group"><label class="fl">Google Sheets ID</label><input type="text" id="set-sheet-id" placeholder="From your Sheet URL"></div>
+            <div class="form-group"><label class="fl">Google Maps API Key</label><input type="text" id="set-maps-key" placeholder="AIzaSy..."></div>
+            <div class="form-group"><label class="fl">Google OAuth Client ID</label><input type="text" id="set-oauth" placeholder="YOUR_CLIENT_ID.apps.googleusercontent.com"></div>
+            <div class="form-group"><label class="fl">Allowed Emails (one per line)</label><textarea id="set-emails" placeholder="adam@example.com&#10;volunteer1@gmail.com"></textarea></div>
+            <button class="btn btn-primary" onclick="saveIntegrationSettings()" style="margin-top:6px;">Save Integration</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <div class="card-title">Data Management</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="exportCSV()">⬇️ Export All Data (CSV)</button>
+            <button class="btn btn-ghost" onclick="refreshFromSheet()">🔄 Sync from Google Sheet</button>
+            <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear Local Data</button>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--slate);">
+            Local entries: <strong id="data-count" style="color:var(--white)">0</strong> contacts stored.
+            Data is saved locally and synced to your Google Sheet when configured.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /app-body -->
+</div><!-- /app -->
+
+<!-- POLICY MODAL -->
+<div class="modal-overlay" id="policy-modal">
+  <div class="modal">
+    <h3 id="modal-h">Add Policy</h3>
+    <div class="modal-field"><label>Policy Title *</label><input type="text" id="pm-title" placeholder="e.g. Pothole Repair Fund"></div>
+    <div class="modal-field"><label>Category</label>
+      <select id="pm-cat">
+        <option value="general">General</option><option value="housing">Housing</option>
+        <option value="roads">Roads & Infrastructure</option><option value="safety">Public Safety</option>
+        <option value="seniors">Seniors</option><option value="environment">Environment</option>
+        <option value="taxes">Taxes & Budget</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Policy Details & Talking Points *</label><textarea id="pm-body" placeholder="Adam's position, specific commitments, how to answer door questions…"></textarea></div>
+    <div class="modal-field"><label>Tags (comma separated)</label><input type="text" id="pm-tags" placeholder="roads, infrastructure, ward10"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closePolicyModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="savePolicy()">Save Policy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// CONFIG — Replace with real values to activate Google features
+// ═══════════════════════════════════════════
+const CONFIG = {
+  GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  SHEET_ID:         'YOUR_GOOGLE_SHEET_ID',
+  MAPS_API_KEY:     'YOUR_GOOGLE_MAPS_API_KEY',
+  ALLOWED_EMAILS:   ['adam@ward10windsor.ca','volunteer1@gmail.com','hq@ward10windsor.ca']
+};
+
+// ═══ STATE ═══
+let entries   = JSON.parse(localStorage.getItem('tr_entries')  || '[]');
+let policies  = JSON.parse(localStorage.getItem('tr_policies') || 'null') || defaultPolicies();
+let settings  = JSON.parse(localStorage.getItem('tr_settings') || '{}');
+let currentUser     = null;
+let selectedSupport = '', selectedDoor = '', selectedIssues = [];
+let currentFilter   = 'all', visitFilter = 'all', activePolicyCat = 'all';
+let editPolicyId    = null;
+let mediaRec        = null, isRecording  = false;
+let gmap            = null, mapMarkers   = [];
+
+// ═══ DEFAULT POLICIES ═══
+function defaultPolicies() {
+  return [
+    {id:1,title:'Road & Pothole Repair',cat:'roads',body:'Committed to a dedicated annual Road Repair Fund, prioritizing the worst-rated streets identified through resident surveys. A public pothole-reporting system with guaranteed repairs within 14 days of verified reports.\n\nAt the door: If someone mentions a specific road, log the street name. Tell them this is a top priority with a funded repair schedule ready within the first 90 days in office.',tags:['roads','potholes','infrastructure']},
+    {id:2,title:'Housing Affordability',cat:'housing',body:'Supporting rezoning underutilized commercial lots near transit corridors for mixed-income housing. An affordable unit requirement in all new developments, and a first-time homebuyer support program.\n\nAt the door: Acknowledge the crisis is real. Responsible densification without destroying neighbourhood character.',tags:['housing','affordability','zoning']},
+    {id:3,title:'Public Safety & Community Policing',cat:'safety',body:'Advocating for additional community officers with a mandate for foot patrols and neighbourhood engagement. Supporting a community safety grant for youth diversion programs.\n\nAt the door: Empathize — do not dismiss safety concerns. Prevention and community investment are as important as enforcement.',tags:['safety','police','crime']},
+    {id:4,title:'Seniors Services',cat:'seniors',body:'Fighting to keep the Senior Centre fully funded and expanding its programming. Supporting a seniors transportation pilot and pushing for more accessible sidewalks and curb cuts.\n\nAt the door: Many seniors worry about being forgotten. Making this the most senior-friendly ward is the commitment.',tags:['seniors','accessibility','transit']},
+    {id:5,title:'Property Tax Fairness',cat:'taxes',body:'Opposing blanket tax increases on homeowners. Pushing for an audit of spending efficiency before any new tax, and advocating for small-business tax relief to keep local corridors thriving.\n\nAt the door: Be clear — not anti-services. Want every tax dollar to work harder before asking residents for more.',tags:['taxes','budget','business']},
+    {id:6,title:'Parks & Green Space',cat:'environment',body:'Securing funding to restore park infrastructure and add shade structures. Supporting a community garden expansion program and planting hundreds of trees over the first term.\n\nAt the door: Great with families. Ask what park improvements they want most and note it.',tags:['parks','environment','families']},
+  ];
+}
+
+// ═══ CATS ═══
+const CATS = {
+  general:     {label:'General',       color:'var(--slate)'},
+  housing:     {label:'Housing',       color:'#60a5fa'},
+  roads:       {label:'Roads',         color:'var(--orange)'},
+  safety:      {label:'Safety',        color:'var(--red)'},
+  seniors:     {label:'Seniors',       color:'var(--purple)'},
+  environment: {label:'Environment',   color:'var(--green)'},
+  taxes:       {label:'Taxes/Budget',  color:'var(--gold)'},
+};
+
+// ═══ LOGIN ═══
+window.onload = function() {
+  refreshDatetime();
+  loadSettings();
+  if (CONFIG.GOOGLE_CLIENT_ID.startsWith('YOUR_')) return; // demo mode default
+  google.accounts.id.initialize({ client_id: CONFIG.GOOGLE_CLIENT_ID, callback: handleGoogleLogin });
+  google.accounts.id.renderButton(document.getElementById('google-signin-btn'),
+    {theme:'filled_black', size:'large', text:'signin_with', shape:'pill', width:260});
+};
+
+function handleGoogleLogin(response) {
+  const p = parseJwt(response.credential);
+  if (!CONFIG.ALLOWED_EMAILS.includes(p.email)) {
+    document.getElementById('login-error').classList.add('show'); return;
+  }
+  currentUser = {name:p.name, email:p.email, picture:p.picture};
+  document.getElementById('login-error').classList.remove('show');
+  showApp();
+  if (!CONFIG.SHEET_ID.startsWith('YOUR_')) gapi.load('client', initGapi);
+}
+
+function startDemo() {
+  currentUser = {name:'Demo Volunteer', email:'demo@turfrunner.com', picture:''};
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('tb-name').textContent = currentUser.name.split(' ')[0];
+  if (currentUser.picture) document.getElementById('tb-avatar').src = currentUser.picture;
+  else document.getElementById('tb-avatar').style.display = 'none';
+  prefillVolunteer(); refreshDatetime();
+  updateCampaignBadge();
+  renderDashboard(); renderVisits(); renderPolicies(); renderQuickRef();
+  updateDataCount();
+  if (!CONFIG.MAPS_API_KEY.startsWith('YOUR_')) loadMaps();
+}
+
+function signOut() {
+  if (!CONFIG.GOOGLE_CLIENT_ID.startsWith('YOUR_')) try { google.accounts.id.disableAutoSelect(); } catch(e) {}
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function parseJwt(token) {
+  const b = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+  return JSON.parse(decodeURIComponent(atob(b).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+}
+
+// ═══ SETTINGS ═══
+function loadSettings() {
+  if (settings.campaignName) document.getElementById('set-campaign-name').value = settings.campaignName;
+  if (settings.candidate)    document.getElementById('set-candidate').value    = settings.candidate;
+  if (settings.ward)         document.getElementById('set-ward').value          = settings.ward;
+  if (settings.level)        document.getElementById('set-level').value         = settings.level;
+  if (settings.country)      document.getElementById('set-country').value       = settings.country;
+  if (settings.sheetId)      document.getElementById('set-sheet-id').value      = settings.sheetId;
+  if (settings.mapsKey)      document.getElementById('set-maps-key').value      = settings.mapsKey;
+  if (settings.emails)       document.getElementById('set-emails').value        = settings.emails;
+}
+
+function saveCampaignSettings() {
+  settings.campaignName = document.getElementById('set-campaign-name').value.trim();
+  settings.candidate    = document.getElementById('set-candidate').value.trim();
+  settings.ward         = document.getElementById('set-ward').value.trim();
+  settings.level        = document.getElementById('set-level').value;
+  settings.country      = document.getElementById('set-country').value;
+  localStorage.setItem('tr_settings', JSON.stringify(settings));
+  updateCampaignBadge();
+  alert('Campaign settings saved!');
+}
+
+function saveIntegrationSettings() {
+  settings.sheetId = document.getElementById('set-sheet-id').value.trim();
+  settings.mapsKey = document.getElementById('set-maps-key').value.trim();
+  settings.oauth   = document.getElementById('set-oauth').value.trim();
+  settings.emails  = document.getElementById('set-emails').value.trim();
+  localStorage.setItem('tr_settings', JSON.stringify(settings));
+  alert('Integration settings saved! Reload the app to apply.');
+}
+
+function updateCampaignBadge() {
+  const ward = settings.ward || 'Your Campaign';
+  document.getElementById('campaign-badge').textContent = '📍 ' + ward;
+}
+
+function updateDataCount() {
+  const el = document.getElementById('data-count');
+  if (el) el.textContent = entries.length;
+}
+
+function clearAllData() {
+  if (!confirm('Clear all local data? This cannot be undone.')) return;
+  entries = [];
+  localStorage.removeItem('tr_entries');
+  renderDashboard(); renderVisits(); updateDataCount();
+  alert('Local data cleared.');
+}
+
+// ═══ SHEETS ═══
+const HEADERS = ['Timestamp','Volunteer','Address','DoorStatus','FirstName','LastName','Phone','Email','Support','Issues','Notes','FollowUp','VolunteerInterest','Lat','Lng'];
+
+async function initGapi() {
+  await gapi.client.init({discoveryDocs:['https://sheets.googleapis.com/$discovery/rest?version=v4']});
+  try {
+    const r = await gapi.client.sheets.spreadsheets.values.get({spreadsheetId:CONFIG.SHEET_ID, range:'Sheet1!A1:O1'});
+    if (!r.result.values) await gapi.client.sheets.spreadsheets.values.update({spreadsheetId:CONFIG.SHEET_ID, range:'Sheet1!A1', valueInputOption:'RAW', resource:{values:[HEADERS]}});
+  } catch(e) {}
+}
+
+async function appendToSheet(entry) {
+  const sid = settings.sheetId || CONFIG.SHEET_ID;
+  if (!sid || sid.startsWith('YOUR_')) return;
+  try {
+    setSyncSt('syncing','Syncing to Sheet…');
+    const row = [entry.timestamp,entry.volunteer,entry.address,entry.doorStatus,entry.firstName,entry.lastName,entry.phone,entry.email,entry.support,(entry.issues||[]).join(', '),entry.notes,entry.followUp,entry.volunteerInterest,entry.lat||'',entry.lng||''];
+    await gapi.client.sheets.spreadsheets.values.append({spreadsheetId:sid, range:'Sheet1!A1', valueInputOption:'RAW', insertDataOption:'INSERT_ROWS', resource:{values:[row]}});
+    setSyncSt('synced','Synced ✓');
+  } catch(e) { setSyncSt('error','Sync failed — saved locally'); }
+}
+
+async function refreshFromSheet() {
+  const sid = settings.sheetId || CONFIG.SHEET_ID;
+  if (!sid || sid.startsWith('YOUR_')) { alert('Configure Google Sheet ID in Settings first.'); return; }
+  try {
+    setSyncSt('syncing','Loading from Sheet…');
+    const r = await gapi.client.sheets.spreadsheets.values.get({spreadsheetId:sid, range:'Sheet1!A2:O'});
+    const rows = r.result.values || [];
+    entries = rows.map(r => ({timestamp:r[0]||'',volunteer:r[1]||'',address:r[2]||'',doorStatus:r[3]||'',firstName:r[4]||'',lastName:r[5]||'',phone:r[6]||'',email:r[7]||'',support:r[8]||'',issues:r[9]?r[9].split(', ').filter(Boolean):[],notes:r[10]||'',followUp:r[11]||'No',volunteerInterest:r[12]||'No',lat:r[13]||'',lng:r[14]||''}));
+    localStorage.setItem('tr_entries', JSON.stringify(entries));
+    setSyncSt('synced','Loaded ' + entries.length + ' entries');
+    renderDashboard(); renderVisits(); updateDataCount();
+    if (gmap) plotMarkers();
+  } catch(e) { setSyncSt('error','Could not load from Sheet'); }
+}
+
+function setSyncSt(type, msg) {
+  const el = document.getElementById('sync-status');
+  el.className = 'sync-status ' + type; el.textContent = msg;
+  if (type === 'synced') setTimeout(() => { el.textContent=''; el.className='sync-status'; }, 4000);
+}
+
+// ═══ VOICE ═══
+function toggleVoice() {
+  if (isRecording) { stopVoice(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { document.getElementById('voice-status').textContent = 'Not supported'; return; }
+  mediaRec = new SR(); mediaRec.lang = 'en-CA'; mediaRec.continuous = true; mediaRec.interimResults = true;
+  const ta = document.getElementById('f-notes'), existing = ta.value;
+  mediaRec.onresult = (e) => {
+    let fin='',int='';
+    for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)fin+=e.results[i][0].transcript;else int+=e.results[i][0].transcript;}
+    ta.value = existing + (existing?' ':'') + fin + int;
+  };
+  mediaRec.onerror = () => stopVoice();
+  mediaRec.onend   = () => { if(isRecording) stopVoice(); };
+  mediaRec.start(); isRecording = true;
+  document.getElementById('voice-btn').classList.add('recording');
+  document.getElementById('voice-btn').textContent = '⏹️';
+  const vs = document.getElementById('voice-status'); vs.textContent = '● Recording…';
+}
+
+function stopVoice() {
+  if (mediaRec) try { mediaRec.stop(); } catch(e) {}
+  isRecording = false;
+  document.getElementById('voice-btn').classList.remove('recording');
+  document.getElementById('voice-btn').textContent = '🎙️';
+  document.getElementById('voice-status').textContent = 'Tap mic';
+}
+
+// ═══ FIELD FORM ═══
+function refreshDatetime() { const el=document.getElementById('f-datetime'); if(el) el.value=new Date().toLocaleString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function prefillVolunteer() { if(currentUser) document.getElementById('f-volunteer').value = currentUser.name; }
+function selectDoor(btn,s){ document.querySelectorAll('.door-btn').forEach(b=>b.classList.remove('door-sel')); btn.classList.add('door-sel'); selectedDoor=s; document.getElementById('resident-section').style.display=(s==='Answered')?'block':'none'; }
+function selectSupport(btn,l){ document.querySelectorAll('.support-btn').forEach(b=>b.className='support-btn'); btn.classList.add('sel-'+l); selectedSupport=l; }
+function toggleIssue(el){ const i=el.textContent; if(el.classList.contains('selected')){el.classList.remove('selected');selectedIssues=selectedIssues.filter(x=>x!==i);}else{el.classList.add('selected');selectedIssues.push(i);} }
+
+async function submitEntry() {
+  const address = document.getElementById('f-address').value.trim();
+  if (!address) { alert('Please enter the street address.'); return; }
+  if (!selectedDoor) { alert('Please select a door status.'); return; }
+  const btn = document.getElementById('submit-btn'); btn.disabled=true; btn.textContent='Saving…';
+
+  const entry = {
+    id: Date.now(), timestamp: new Date().toISOString(), address,
+    volunteer: document.getElementById('f-volunteer').value.trim() || currentUser?.name || 'Anonymous',
+    doorStatus: selectedDoor,
+    firstName: document.getElementById('f-first').value.trim(),
+    lastName:  document.getElementById('f-last').value.trim(),
+    phone:     document.getElementById('f-phone').value.trim(),
+    email:     document.getElementById('f-email').value.trim(),
+    support: selectedSupport, issues: [...selectedIssues],
+    notes:   document.getElementById('f-notes').value.trim(),
+    followUp: document.getElementById('f-followup').value,
+    volunteerInterest: document.getElementById('f-vol-interest').value,
+    lat:'', lng:''
+  };
+
+  if (!(settings.mapsKey || CONFIG.MAPS_API_KEY).startsWith('YOUR_')) {
+    const c = await geocodeAddr(entry.address); if(c){entry.lat=c.lat;entry.lng=c.lng;}
+  }
+
+  entries.unshift(entry);
+  localStorage.setItem('tr_entries', JSON.stringify(entries));
+  await appendToSheet(entry);
+
+  ['f-address','f-first','f-last','f-phone','f-email','f-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-followup').value='No'; document.getElementById('f-vol-interest').value='No';
+  document.querySelectorAll('.support-btn').forEach(b=>b.className='support-btn');
+  document.querySelectorAll('.door-btn').forEach(b=>b.classList.remove('door-sel'));
+  document.querySelectorAll('.issue-tag').forEach(t=>t.classList.remove('selected'));
+  document.getElementById('resident-section').style.display='block';
+  selectedSupport=''; selectedDoor=''; selectedIssues=[];
+  prefillVolunteer(); refreshDatetime();
+  const banner=document.getElementById('success-banner'); banner.classList.add('show'); setTimeout(()=>banner.classList.remove('show'),3500);
+  btn.disabled=false; btn.textContent='📋 Log This Contact →';
+  renderDashboard(); renderVisits(); updateDataCount();
+}
+
+// ═══ DASHBOARD ═══
+function renderDashboard() {
+  const unique = new Set(entries.map(e=>e.address.toLowerCase().trim())).size;
+  document.getElementById('s-total').textContent     = entries.length;
+  document.getElementById('s-homes').textContent     = unique;
+  document.getElementById('s-support').textContent   = entries.filter(e=>e.support==='strong'||e.support==='lean').length;
+  document.getElementById('s-undecided').textContent = entries.filter(e=>e.support==='undecided').length;
+  document.getElementById('s-followup').textContent  = entries.filter(e=>e.followUp&&e.followUp!=='No').length;
+  document.getElementById('sb-strong').textContent   = entries.filter(e=>e.support==='strong').length;
+  document.getElementById('sb-lean').textContent     = entries.filter(e=>e.support==='lean').length;
+  document.getElementById('sb-undecided2').textContent = entries.filter(e=>e.support==='undecided').length;
+  document.getElementById('sb-against').textContent  = entries.filter(e=>e.support==='against').length;
+  renderIssueBars(); renderDoorBars('door-bars'); renderEntries(currentFilter);
+}
+
+function renderIssueBars() {
+  const counts={}; entries.forEach(e=>(e.issues||[]).forEach(i=>{counts[i]=(counts[i]||0)+1;}));
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,7); const max=sorted[0]?.[1]||1;
+  const el=document.getElementById('issue-bars');
+  if(!sorted.length){el.innerHTML='<p style="color:var(--slate);font-size:12px">No issues recorded yet.</p>';return;}
+  el.innerHTML=sorted.map(([iss,cnt])=>`<div class="issue-bar-row"><div class="issue-bar-label"><span>${iss}</span><span>${cnt}</span></div><div class="issue-bar-track"><div class="issue-bar-fill" style="width:${cnt/max*100}%"></div></div></div>`).join('');
+}
+
+function renderDoorBars(targetId) {
+  const ans=entries.filter(e=>e.doorStatus==='Answered').length;
+  const nh =entries.filter(e=>e.doorStatus==='Not Home').length;
+  const dnd=entries.filter(e=>e.doorStatus==='Do Not Disturb').length;
+  const max=Math.max(ans,nh,dnd,1);
+  document.getElementById(targetId).innerHTML = `
+    <div class="bar-item"><div class="bar-name">Answered</div><div class="bar-track"><div class="bar-fill" style="width:${ans/max*100}%;background:var(--green)"></div></div><div class="bar-count">${ans}</div></div>
+    <div class="bar-item"><div class="bar-name">Not Home</div><div class="bar-track"><div class="bar-fill" style="width:${nh/max*100}%;background:var(--orange)"></div></div><div class="bar-count">${nh}</div></div>
+    <div class="bar-item"><div class="bar-name">DND</div><div class="bar-track"><div class="bar-fill" style="width:${dnd/max*100}%;background:var(--red)"></div></div><div class="bar-count">${dnd}</div></div>`;
+}
+
+function filterEntries(f,btn){currentFilter=f;document.querySelectorAll('#view-dashboard .filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderEntries(f);}
+
+function renderEntries(filter) {
+  let list=[...entries];
+  if(filter==='strong') list=list.filter(e=>e.support==='strong');
+  else if(filter==='lean') list=list.filter(e=>e.support==='lean');
+  else if(filter==='undecided') list=list.filter(e=>e.support==='undecided');
+  else if(filter==='against') list=list.filter(e=>e.support==='against');
+  else if(filter==='followup') list=list.filter(e=>e.followUp&&e.followUp!=='No');
+  const dc={strong:'dot-strong',lean:'dot-lean',undecided:'dot-undecided',against:'dot-against'};
+  const el=document.getElementById('entries-list');
+  if(!list.length){el.innerHTML='<div class="empty-state">No entries yet. Start knocking doors! 🚪</div>';return;}
+  el.innerHTML=list.map(e=>{
+    const name=[e.firstName,e.lastName].filter(Boolean).join(' ')||'Unknown Resident';
+    const time=e.timestamp?new Date(e.timestamp).toLocaleString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const issues=(e.issues||[]).map(i=>`<span class="etag">${i}</span>`).join('');
+    return `<div class="entry-card"><div class="sup-dot ${dc[e.support]||'dot-def'}"></div><div><div class="entry-name">${name}</div><div class="entry-addr">${e.address}${e.doorStatus?' · '+e.doorStatus:''}</div>${issues?`<div class="entry-issues">${issues}</div>`:''}${e.notes?`<div class="entry-notes">"${e.notes}"</div>`:''}${e.followUp&&e.followUp!=='No'?`<div class="fu-badge">⚡ ${e.followUp}</div>`:''}</div><div class="entry-meta">${time}<br><span style="opacity:0.6">${e.volunteer||''}</span></div></div>`;
+  }).join('');
+}
+
+// ═══ VISITS ═══
+function renderVisits() {
+  const total=entries.length;
+  const ans=entries.filter(e=>e.doorStatus==='Answered').length;
+  const nh=entries.filter(e=>e.doorStatus==='Not Home').length;
+  const dnd=entries.filter(e=>e.doorStatus==='Do Not Disturb').length;
+  const rate=total?Math.round(ans/total*100):0;
+  document.getElementById('v-total').textContent=total;
+  document.getElementById('v-ans').textContent=ans;
+  document.getElementById('v-nh').textContent=nh;
+  document.getElementById('v-dnd').textContent=dnd;
+  document.getElementById('v-rate').textContent=rate+'%';
+  renderDoorBars('v-door-bars');
+  // volunteer table
+  const vm={};
+  entries.forEach(e=>{const v=e.volunteer||'Unknown';if(!vm[v])vm[v]={t:0,a:0};vm[v].t++;if(e.doorStatus==='Answered')vm[v].a++;});
+  const vols=Object.entries(vm).sort((a,b)=>b[1].t-a[1].t).slice(0,10);
+  const tbody=document.getElementById('v-vol-tbody');
+  if(!vols.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:16px;color:var(--slate)">No data yet</td></tr>';return;}
+  tbody.innerHTML=vols.map(([name,d])=>{const r=Math.round(d.a/d.t*100);const cls=r>=60?'g':r>=30?'o':'r';return `<tr><td><strong>${name}</strong></td><td>${d.t}</td><td>${d.a}</td><td><span class="vbadge ${cls}">${r}%</span></td></tr>`;}).join('');
+  renderVisitList();
+}
+
+function filterVisits(f,btn){visitFilter=f;document.querySelectorAll('#view-visits .filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderVisitList();}
+
+function renderVisitList() {
+  const q=(document.getElementById('visit-search')?.value||'').toLowerCase();
+  let list=[...entries];
+  if(visitFilter!=='all') list=list.filter(e=>e.doorStatus===visitFilter);
+  if(q) list=list.filter(e=>(e.address||'').toLowerCase().includes(q)||(e.volunteer||'').toLowerCase().includes(q));
+  const el=document.getElementById('visit-list');
+  if(!list.length){el.innerHTML='<div class="empty-state">No visits match this filter.</div>';return;}
+  const pc={'Answered':'pill-ans','Not Home':'pill-nh','Do Not Disturb':'pill-dnd'};
+  el.innerHTML=list.map(e=>{
+    const name=[e.firstName,e.lastName].filter(Boolean).join(' ');
+    const time=e.timestamp?new Date(e.timestamp).toLocaleString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const issStr=e.issues?.length?e.issues.slice(0,3).join(', ')+(e.issues.length>3?'…':''):'';
+    return `<div class="vli"><span class="pill ${pc[e.doorStatus]||'pill-nh'}">${e.doorStatus||'Unknown'}</span><div><div class="vli-addr">${e.address}</div><div class="vli-meta">${name?name+' · ':''} ${issStr}</div></div><div class="vli-right">${e.volunteer||''}<br><span style="opacity:0.6">${time}</span></div></div>`;
+  }).join('');
+}
+
+// ═══ POLICY HUB ═══
+function renderQuickRef() {
+  const el=document.getElementById('qr-grid');
+  el.innerHTML=policies.slice(0,6).map(p=>{const cc=CATS[p.cat]||CATS.general;return `<div class="qr-item" onclick="jumpToPolicy(${p.id})"><div class="qr-item-title">${p.title}</div><div class="qr-item-sub" style="color:${cc.color}">${cc.label}</div></div>`;}).join('');
+}
+
+function jumpToPolicy(id){switchView('policy',document.querySelectorAll('.sidebar-item')[4]);activePolicyCat='all';renderPolicies();setTimeout(()=>{const el=document.getElementById('pc-'+id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('open');}},100);}
+
+function renderPolicies() {
+  const q=(document.getElementById('policy-search')?.value||'').toLowerCase();
+  const allCats=['all',...new Set(policies.map(p=>p.cat))];
+  document.getElementById('policy-cats').innerHTML=allCats.map(c=>{const lbl=c==='all'?'All':(CATS[c]?.label||c);return `<button class="pcat-btn${activePolicyCat===c?' active':''}" onclick="setPolicyCat('${c}',this)">${lbl}</button>`;}).join('');
+  let list=[...policies];
+  if(activePolicyCat!=='all') list=list.filter(p=>p.cat===activePolicyCat);
+  if(q) list=list.filter(p=>(p.title+p.body+(p.tags||[]).join(' ')).toLowerCase().includes(q));
+  const el=document.getElementById('policy-list');
+  if(!list.length){el.innerHTML='<div class="empty-state">No policies found. Add one above!</div>';return;}
+  el.innerHTML=list.map(p=>{
+    const cc=CATS[p.cat]||CATS.general;
+    const tags=(p.tags||[]).map(t=>`<span class="ptag">${t}</span>`).join('');
+    return `<div class="policy-card" id="pc-${p.id}">
+      <div class="policy-head" onclick="togglePolicy(${p.id})">
+        <div class="pcat-dot dot-${p.cat}" style="background:${cc.color}"></div>
+        <div class="policy-title-txt">${p.title}</div>
+        <span class="pcat-pill cat-${p.cat}">${cc.label}</span>
+        <span class="expand-ico">▼</span>
+      </div>
+      <div class="policy-body-inner">
+        <div class="policy-body-txt">${p.body}</div>
+        ${tags?`<div style="margin-top:10px">${tags}</div>`:''}
+        <div class="policy-acts">
+          <button class="btn btn-ghost btn-sm" onclick="openPolicyModal(${p.id})">✏️ Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePolicy(${p.id})">🗑️ Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setPolicyCat(cat){activePolicyCat=cat;renderPolicies();}
+function togglePolicy(id){document.getElementById('pc-'+id).classList.toggle('open');}
+
+function openPolicyModal(id){
+  editPolicyId=id;
+  document.getElementById('modal-h').textContent=id?'Edit Policy':'Add Policy';
+  if(id){const p=policies.find(x=>x.id===id);if(p){document.getElementById('pm-title').value=p.title;document.getElementById('pm-cat').value=p.cat;document.getElementById('pm-body').value=p.body;document.getElementById('pm-tags').value=(p.tags||[]).join(', ');}}
+  else{document.getElementById('pm-title').value='';document.getElementById('pm-cat').value='general';document.getElementById('pm-body').value='';document.getElementById('pm-tags').value='';}
+  document.getElementById('policy-modal').classList.add('show');
+}
+function closePolicyModal(){document.getElementById('policy-modal').classList.remove('show');editPolicyId=null;}
+function savePolicy(){
+  const title=document.getElementById('pm-title').value.trim();
+  const body=document.getElementById('pm-body').value.trim();
+  if(!title||!body){alert('Title and details are required.');return;}
+  const tags=document.getElementById('pm-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  if(editPolicyId){const idx=policies.findIndex(p=>p.id===editPolicyId);if(idx>-1)policies[idx]={...policies[idx],title,cat:document.getElementById('pm-cat').value,body,tags};}
+  else policies.unshift({id:Date.now(),title,cat:document.getElementById('pm-cat').value,body,tags});
+  localStorage.setItem('tr_policies',JSON.stringify(policies));
+  closePolicyModal(); renderPolicies(); renderQuickRef();
+}
+function deletePolicy(id){
+  if(!confirm('Delete this policy?'))return;
+  policies=policies.filter(p=>p.id!==id);
+  localStorage.setItem('tr_policies',JSON.stringify(policies));
+  renderPolicies(); renderQuickRef();
+}
+
+// ═══ CSV EXPORT ═══
+function exportCSV() {
+  if(!entries.length){alert('No entries to export yet.');return;}
+  const h=['Timestamp','Volunteer','Address','DoorStatus','FirstName','LastName','Phone','Email','Support','Issues','Notes','FollowUp','VolunteerInterest'];
+  const rows=entries.map(e=>[e.timestamp,e.volunteer,e.address,e.doorStatus,e.firstName,e.lastName,e.phone,e.email,e.support,(e.issues||[]).join('; '),e.notes,e.followUp,e.volunteerInterest].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`));
+  const csv=[h.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`turfrunner_canvass_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+
+// ═══ MAPS ═══
+function loadMaps(){const s=document.createElement('script');s.src='https://maps.googleapis.com/maps/api/js?key='+(settings.mapsKey||CONFIG.MAPS_API_KEY)+'&callback=initMap';s.async=true;s.defer=true;document.head.appendChild(s);}
+window.initMap=function(){
+  document.getElementById('map-placeholder').style.display='none';
+  document.getElementById('map').style.display='block';
+  gmap=new google.maps.Map(document.getElementById('map'),{center:{lat:42.3149,lng:-83.0364},zoom:13,styles:[{featureType:'all',elementType:'geometry',stylers:[{color:'#1a2436'}]},{featureType:'water',stylers:[{color:'#0d1f3c'}]},{featureType:'road',elementType:'geometry',stylers:[{color:'#2a3f6f'}]},{featureType:'road',elementType:'labels.text.fill',stylers:[{color:'#94a3b8'}]},{featureType:'poi',stylers:[{color:'#1a2436'}]},{featureType:'administrative',elementType:'labels.text.fill',stylers:[{color:'#f5a623'}]}]});
+  plotMarkers();
+};
+function plotMarkers(){
+  mapMarkers.forEach(m=>m.setMap(null));mapMarkers=[];
+  const cm={strong:'#22c55e',lean:'#1d6ef5',undecided:'#f5a623',against:'#e63946'};
+  entries.filter(e=>e.lat&&e.lng).forEach(e=>{
+    const name=[e.firstName,e.lastName].filter(Boolean).join(' ')||'Unknown';
+    const marker=new google.maps.Marker({position:{lat:parseFloat(e.lat),lng:parseFloat(e.lng)},map:gmap,title:name+' — '+e.address,icon:{path:google.maps.SymbolPath.CIRCLE,scale:9,fillColor:cm[e.support]||'#94a3b8',fillOpacity:0.9,strokeColor:'#fff',strokeWeight:2}});
+    const info=new google.maps.InfoWindow({content:'<div style="font-family:sans-serif;font-size:13px;max-width:220px;color:#0f1520"><strong>'+name+'</strong><br><span style="color:#666">'+e.address+'</span>'+(e.issues?.length?'<br><em>'+e.issues.join(', ')+'</em>':'')+(e.notes?'<br>"'+e.notes.slice(0,100)+'"':'')+'</div>'});
+    marker.addListener('click',()=>info.open(gmap,marker));
+    mapMarkers.push(marker);
+  });
+}
+async function geocodeAddr(address){
+  const key=settings.mapsKey||CONFIG.MAPS_API_KEY;
+  if(!key||key.startsWith('YOUR_'))return null;
+  try{const geo=new google.maps.Geocoder();return new Promise(resolve=>{geo.geocode({address:address+', Ontario, Canada'},(results,status)=>{if(status==='OK')resolve({lat:results[0].geometry.location.lat(),lng:results[0].geometry.location.lng()});else resolve(null);});});}catch(e){return null;}
+}
+
+// ═══ AI BRIEFING ═══
+async function loadAIBriefing(){
+  const el=document.getElementById('ai-briefing');
+  if(!entries.length){el.textContent='No field data yet — start knocking doors first!';return;}
+  el.innerHTML='<span class="typing">Analyzing field data</span>';
+  const summary=entries.slice(0,80).map(e=>{const n=[e.firstName,e.lastName].filter(Boolean).join(' ')||'Unknown';return `Address: ${e.address} | Resident: ${n} | Support: ${e.support||'unknown'} | Issues: ${(e.issues||[]).join(', ')} | Notes: ${e.notes||'none'}`;}).join('\n');
+  const sc={strong:entries.filter(e=>e.support==='strong').length,lean:entries.filter(e=>e.support==='lean').length,undecided:entries.filter(e=>e.support==='undecided').length,against:entries.filter(e=>e.support==='against').length};
+  const ward=settings.ward||'the local ward';
+  const candidate=settings.candidate||'the candidate';
+  const level=settings.level||'municipal';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`You are a political campaign strategist for ${candidate}, running for ${level} in ${ward}.\n\nCanvassing data from the field team:\n${summary}\n\nSupport — Strong: ${sc.strong}, Leaning: ${sc.lean}, Undecided: ${sc.undecided}, Against: ${sc.against}\n\nWrite a concise 5-6 sentence strategic briefing for the campaign HQ team. Include:\n1. The top 2-3 community concerns raised most frequently\n2. What the current support numbers signal about the campaign's position\n3. One specific, actionable recommendation for this week's messaging or outreach\nBe direct, specific, and campaign-focused. No fluff.`}]})});
+    const data=await res.json();
+    const briefingText=data.content?.map(b=>b.text||'').join('')||'Unable to generate briefing.';
+    el.textContent=briefingText;
+    // Update the summary section too
+    document.getElementById('ai-summary').textContent=briefingText;
+    // Generate conversation coach
+    generateCoach();
+  }catch(e){el.textContent='Could not connect to AI. Check your connection and try again.';}
+}
+
+async function generateCoach(){
+  const el=document.getElementById('ai-coach');
+  if(!entries.length)return;
+  const undecided=entries.filter(e=>e.support==='undecided').slice(0,3);
+  if(!undecided.length){el.textContent='No undecided voters logged yet. Log more field contacts to get personalized conversation coaching.';return;}
+  el.innerHTML='<span class="typing">Generating coaching tips</span>';
+  const contacts=undecided.map(e=>`Address: ${e.address} | Issues: ${(e.issues||[]).join(', ')} | Notes: ${e.notes||'none'}`).join('\n');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:`For these undecided voters, give a 2-3 sentence suggested opening approach for each when knocking their door again:\n\n${contacts}\n\nFormat: Address → Suggested approach. Be specific to their known concerns. Keep it conversational, not scripted.`}]})});
+    const data=await res.json();
+    el.textContent=data.content?.map(b=>b.text||'').join('')||'Unable to generate coaching tips.';
+  }catch(e){el.textContent='Could not generate coaching tips.';}
+}
+
+// ═══ NAV ═══
+function switchView(view,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(view==='dashboard') renderDashboard();
+  if(view==='visits')    renderVisits();
+  if(view==='map'&&gmap) plotMarkers();
+  if(view==='policy')    renderPolicies();
+  if(view==='settings')  updateDataCount();
+}
+
+document.getElementById('policy-modal').addEventListener('click',function(e){if(e.target===this)closePolicyModal();});
+</script>
+</body>
+</html>
