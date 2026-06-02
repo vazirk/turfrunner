@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TurfRunner — Campaign Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js"></script>
 
@@ -20,7 +20,7 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;font-size:16px;}
-body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;color:var(--white);overflow-x:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--dark);min-height:100vh;color:var(--white);overflow-x:hidden;}
 
 /* ═══ LOGIN ═══ */
 #login-screen{
@@ -37,16 +37,16 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;col
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 .login-logo-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:28px;}
-.login-logo-mark{width:48px;height:48px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:#fff;box-shadow:0 0 30px rgba(29,110,245,0.4);}
-.login-logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
+.login-logo-mark{width:48px;height:48px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-weight:400;letter-spacing:1px;font-size:26px;color:#fff;box-shadow:0 0 30px rgba(29,110,245,0.4);}
+.login-logo-text{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:26px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
 .login-logo-text em{color:var(--cyan);font-style:normal;}
-.login-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--white);margin-bottom:6px;letter-spacing:0.5px;}
-.login-sub{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:28px;}
+.login-title{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:20px;color:var(--white);margin-bottom:6px;letter-spacing:0.5px;}
+.login-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:28px;}
 .login-desc{color:var(--slate);font-size:13px;margin-bottom:28px;line-height:1.6;}
 #google-signin-btn{display:inline-block;}
 .login-error{margin-top:16px;background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.3);color:#f87171;border-radius:8px;padding:10px 16px;font-size:13px;display:none;}
 .login-error.show{display:block;}
-.demo-btn{margin-top:14px;width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid var(--border2);border-radius:8px;color:var(--slate);font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.demo-btn{margin-top:14px;width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid var(--border2);border-radius:8px;color:var(--slate);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .demo-btn:hover{background:rgba(255,255,255,0.09);color:var(--white);}
 
 /* ═══ APP SHELL ═══ */
@@ -58,8 +58,8 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;col
 }
 .topbar-left{display:flex;align-items:center;gap:14px;}
 .tb-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
-.tb-logo-mark{width:30px;height:30px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff;}
-.tb-logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
+.tb-logo-mark{width:30px;height:30px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-weight:400;letter-spacing:1px;font-size:16px;color:#fff;}
+.tb-logo-text{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:17px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
 .tb-logo-text em{color:var(--cyan);font-style:normal;}
 .tb-campaign-badge{background:rgba(29,110,245,0.15);border:1px solid rgba(29,110,245,0.25);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--cyan);letter-spacing:0.5px;cursor:pointer;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
@@ -76,7 +76,7 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;col
   display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
 }
 .sidebar-section{padding:8px 0;}
-.sidebar-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);padding:8px 18px 4px;opacity:0.6;}
+.sidebar-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);padding:8px 18px 4px;opacity:0.6;}
 .sidebar-item{
   display:flex;align-items:center;gap:10px;padding:9px 18px;
   font-size:13px;font-weight:500;color:var(--slate);cursor:pointer;
@@ -100,14 +100,14 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;col
   border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;
   display:flex;align-items:center;justify-content:space-between;
 }
-.ph-left h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:var(--white);}
+.ph-left h2{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:var(--white);}
 .ph-left p{font-size:12px;color:var(--slate);margin-top:2px;}
 .ph-right{display:flex;gap:8px;}
 
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
-.card-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.card-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
 
-.btn{padding:8px 18px;border-radius:7px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.btn{padding:8px 18px;border-radius:7px;border:none;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
 .btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:var(--bluem);}
 .btn-ghost{background:rgba(255,255,255,0.05);color:var(--white);border:1px solid var(--border2);}.btn-ghost:hover{background:rgba(255,255,255,0.09);}
 .btn-gold{background:var(--gold);color:#000;}.btn-gold:hover{background:var(--goldl);}
@@ -120,7 +120,7 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;col
 .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
 
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 14px;text-align:center;}
-.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;line-height:1;color:var(--white);}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:34px;font-weight:900;line-height:1;color:var(--white);}
 .stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--slate);margin-top:4px;}
 
 /* FORM */
@@ -129,7 +129,7 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);min-height:100vh;col
 label.fl{font-size:11px;font-weight:600;color:var(--slate);letter-spacing:0.3px;text-transform:uppercase;}
 input[type=text],input[type=tel],input[type=email],textarea,select{
   padding:9px 13px;background:var(--panel);border:1px solid var(--border2);
-  border-radius:7px;font-family:'Barlow',sans-serif;font-size:13px;
+  border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;
   color:var(--white);outline:none;transition:border-color 0.2s;
 }
 input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,110,245,0.12);}
@@ -138,13 +138,13 @@ select option{background:var(--panel);}
 
 /* DOOR BTNS */
 .door-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.door-btn{padding:10px 6px;border-radius:8px;border:1.5px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;text-align:center;transition:all 0.18s;color:var(--slate);}
+.door-btn{padding:10px 6px;border-radius:8px;border:1.5px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;text-align:center;transition:all 0.18s;color:var(--slate);}
 .door-btn:hover{border-color:rgba(255,255,255,0.25);color:var(--white);}
 .door-btn.door-sel{border-color:var(--blue);background:rgba(29,110,245,0.15);color:var(--cyan);}
 
 /* SUPPORT BTNS */
 .support-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.support-btn{padding:10px 8px;border-radius:8px;border:1.5px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;text-align:center;transition:all 0.18s;color:var(--slate);}
+.support-btn{padding:10px 8px;border-radius:8px;border:1.5px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;text-align:center;transition:all 0.18s;color:var(--slate);}
 .support-btn.sel-strong{border-color:var(--green);background:rgba(34,197,94,0.12);color:var(--green);}
 .support-btn.sel-lean{border-color:var(--blue);background:rgba(29,110,245,0.12);color:#93c5fd;}
 .support-btn.sel-undecided{border-color:var(--gold);background:rgba(245,166,35,0.1);color:var(--gold);}
@@ -166,7 +166,7 @@ select option{background:var(--panel);}
 .voice-hint{font-size:10px;color:var(--slate);margin-top:4px;text-align:center;}
 
 /* SUBMIT BTN */
-.submit-btn{width:100%;padding:14px;background:var(--gold);color:#000;border:none;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:6px;}
+.submit-btn{width:100%;padding:14px;background:var(--gold);color:#000;border:none;border-radius:9px;font-family:'Bebas Neue',sans-serif;font-size:17px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:6px;}
 .submit-btn:hover{background:var(--goldl);transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,0.3);}
 .submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 
@@ -188,20 +188,20 @@ select option{background:var(--panel);}
 .sb-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
 .sb-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .sb-label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:0.5px;}
-.sb-count{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--white);}
+.sb-count{font-family:'Bebas Neue',sans-serif;font-size:22px;font-weight:800;color:var(--white);}
 
 /* AI CARD */
 .ai-card{background:linear-gradient(135deg,var(--panel),var(--card));border:1px solid rgba(29,110,245,0.25);border-radius:12px;padding:20px;margin-bottom:18px;}
-.ai-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(29,110,245,0.2);border:1px solid rgba(29,110,245,0.3);border-radius:5px;padding:3px 10px;font-family:'Space Mono',monospace;font-size:9px;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(29,110,245,0.2);border:1px solid rgba(29,110,245,0.3);border-radius:5px;padding:3px 10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;}
 .ai-text{font-size:13px;line-height:1.7;color:var(--text);min-height:60px;}
-.ai-refresh-btn{margin-top:12px;padding:7px 16px;background:rgba(29,110,245,0.12);color:var(--cyan);border:1px solid rgba(29,110,245,0.25);border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.ai-refresh-btn{margin-top:12px;padding:7px 16px;background:rgba(29,110,245,0.12);color:var(--cyan);border:1px solid rgba(29,110,245,0.25);border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
 .ai-refresh-btn:hover{background:rgba(29,110,245,0.22);}
 .typing::after{content:'▊';animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ENTRIES */
 .filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-.filter-chip{padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--slate);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
+.filter-chip{padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--slate);font-family:'Bebas Neue',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
 .filter-chip.active{background:rgba(29,110,245,0.15);border-color:rgba(29,110,245,0.4);color:var(--cyan);}
 
 .entry-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;animation:slideIn 0.2s ease;}
@@ -219,7 +219,7 @@ select option{background:var(--panel);}
 
 /* VISITS */
 .vli{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.pill{padding:4px 9px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.pill{padding:4px 9px;border-radius:5px;font-family:'Bebas Neue',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
 .pill-ans{background:rgba(34,197,94,0.15);color:var(--green);}
 .pill-nh{background:rgba(249,115,22,0.15);color:var(--orange);}
 .pill-dnd{background:rgba(230,57,70,0.15);color:var(--red);}
@@ -235,16 +235,16 @@ select option{background:var(--panel);}
 .bar-count{font-size:12px;font-weight:700;width:28px;text-align:right;color:var(--slate);}
 
 .vol-table{width:100%;border-collapse:collapse;font-size:12px;}
-.vol-table th{text-align:left;padding:8px 10px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);border-bottom:1px solid var(--border);}
+.vol-table th{text-align:left;padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);border-bottom:1px solid var(--border);}
 .vol-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);}
 .vol-table tr:last-child td{border-bottom:none;}
 .vol-table tr:hover td{background:rgba(255,255,255,0.02);}
-.vbadge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;}
+.vbadge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:0.5px;}
 .vbadge.g{background:rgba(34,197,94,0.15);color:var(--green);}
 .vbadge.o{background:rgba(249,115,22,0.15);color:var(--orange);}
 .vbadge.r{background:rgba(230,57,70,0.15);color:var(--red);}
 
-.search-bar{width:100%;padding:9px 14px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-family:'Barlow',sans-serif;font-size:13px;outline:none;margin-bottom:12px;}
+.search-bar{width:100%;padding:9px 14px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-family:'Inter',sans-serif;font-size:13px;outline:none;margin-bottom:12px;}
 .search-bar::placeholder{color:var(--slate);}.search-bar:focus{border-color:var(--blue);}
 
 /* MAP */
@@ -259,8 +259,8 @@ select option{background:var(--panel);}
 .policy-head{padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background 0.15s;}
 .policy-head:hover{background:rgba(255,255,255,0.03);}
 .pcat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.policy-title-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);flex:1;}
-.pcat-pill{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;}
+.policy-title-txt{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:16px;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);flex:1;}
+.pcat-pill{font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;}
 .expand-ico{color:var(--slate);font-size:12px;transition:transform 0.2s;}
 .policy-card.open .expand-ico{transform:rotate(180deg);}
 .policy-body-inner{padding:0 18px 18px;display:none;}
@@ -272,21 +272,21 @@ select option{background:var(--panel);}
 .quick-ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
 .qr-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all 0.18s;}
 .qr-item:hover{border-color:rgba(29,110,245,0.35);background:rgba(29,110,245,0.06);}
-.qr-item-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);margin-bottom:2px;}
+.qr-item-title{font-family:'Bebas Neue',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);margin-bottom:2px;}
 .qr-item-sub{font-size:10px;color:var(--slate);}
 
-.policy-search{width:100%;padding:9px 14px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-family:'Barlow',sans-serif;font-size:13px;outline:none;}
+.policy-search{width:100%;padding:9px 14px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;color:var(--white);font-family:'Inter',sans-serif;font-size:13px;outline:none;}
 .policy-search::placeholder{color:var(--slate);}.policy-search:focus{border-color:var(--blue);}
 
 .policy-cats{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;}
-.pcat-btn{padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--slate);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
+.pcat-btn{padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--slate);font-family:'Bebas Neue',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
 .pcat-btn.active{background:rgba(29,110,245,0.15);border-color:rgba(29,110,245,0.4);color:var(--cyan);}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;}
 .modal-overlay.show{display:flex;}
 .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;max-width:540px;width:92%;max-height:90vh;overflow-y:auto;animation:fadeUp 0.25s ease;}
-.modal h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin-bottom:20px;}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin-bottom:20px;}
 .modal-acts{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
 .modal-field{margin-bottom:14px;}
 .modal-field label{font-size:11px;font-weight:600;color:var(--slate);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
@@ -383,6 +383,9 @@ select option{background:var(--panel);}
       </div>
       <div class="sidebar-section">
         <div class="sidebar-label">Admin</div>
+        <div class="sidebar-item" onclick="switchView('users',this)">
+          <span class="sidebar-icon">👥</span><span>Users</span>
+        </div>
         <div class="sidebar-item" onclick="switchView('settings',this)">
           <span class="sidebar-icon">⚙️</span><span>Settings</span>
         </div>
@@ -538,7 +541,7 @@ select option{background:var(--panel);}
           <div class="sb-item"><div class="sb-dot" style="background:var(--red)"></div><div><div class="sb-label">Not Supporting</div><div class="sb-count" id="sb-against">0</div></div></div>
         </div>
 
-        <div style="margin-bottom:12px;"><span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);">All Submissions</span></div>
+        <div style="margin-bottom:12px;"><span style="font-family:'Bebas Neue',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);">All Submissions</span></div>
         <div class="filter-row">
           <button class="filter-chip active" onclick="filterEntries('all',this)">All</button>
           <button class="filter-chip" onclick="filterEntries('strong',this)">Strong</button>
@@ -635,6 +638,57 @@ select option{background:var(--panel);}
         </div>
       </div>
 
+      <!-- ── USERS VIEW ── -->
+      <div id="view-users" class="view">
+        <div class="page-header">
+          <div class="ph-left"><h2>👥 User Management</h2><p>Control who can access your TurfRunner campaign</p></div>
+          <div class="ph-right"><button class="btn btn-gold btn-sm" onclick="openAddUserModal()">+ Add User</button></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">How Access Works</div>
+          <div style="font-size:13px;line-height:1.7;color:var(--slate);">
+            Users log in with their <strong style="color:var(--white)">Google account</strong>. Only emails on this list can access the platform.
+            Add a user below and they can sign in immediately — no code editing required.
+            <br><br>
+            <span style="color:var(--cyan)">ℹ️ Changes take effect immediately.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Authorized Users (<span id="user-count">0</span>)</div>
+          <div id="users-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+
+      <!-- ADD USER MODAL -->
+      <div class="modal-overlay" id="user-modal">
+        <div class="modal" style="max-width:440px;">
+          <h3>Add New User</h3>
+          <div class="modal-field">
+            <label>Full Name</label>
+            <input type="text" id="um-name" placeholder="e.g. Sarah Johnson">
+          </div>
+          <div class="modal-field">
+            <label>Gmail Address *</label>
+            <input type="email" id="um-email" placeholder="sarah@gmail.com">
+          </div>
+          <div class="modal-field">
+            <label>Role</label>
+            <select id="um-role">
+              <option value="Volunteer">Volunteer — Field canvasser</option>
+              <option value="Team Lead">Team Lead — Manages volunteers</option>
+              <option value="HQ Staff">HQ Staff — Full dashboard access</option>
+              <option value="Admin">Admin — Full access + user management</option>
+            </select>
+          </div>
+          <div class="modal-acts">
+            <button class="btn btn-ghost" onclick="closeUserModal()">Cancel</button>
+            <button class="btn btn-gold" onclick="addUser()">Add User</button>
+          </div>
+        </div>
+      </div>
+
       <!-- ── SETTINGS VIEW ── -->
       <div id="view-settings" class="view">
         <div class="page-header"><div class="ph-left"><h2>⚙️ Campaign Settings</h2><p>Configure your TurfRunner campaign</p></div></div>
@@ -716,14 +770,10 @@ select option{background:var(--panel);}
 // CONFIG — Replace with real values to activate Google features
 // ═══════════════════════════════════════════
 const CONFIG = {
-  GOOGLE_CLIENT_ID: '21999823249-ec07qqgu6d47ebs9at0us7cou4ca24h3.apps.googleusercontent.com',  
-  SHEET_ID:         '1ZbJ46YNczNxK1ro3XHgo09PdhppYI6gFy4H0twNoqAA',
-  MAPS_API_KEY:     'AIzaSyCuRk8sDGBHB-_8K_8fOm_3BPCYiZbJxsc',
-  ALLOWED_EMAILS:   [
-    'vazirk@gmail.com',
-    'volunteer@gmail.com'
-  ]
-};
+  GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  SHEET_ID:         'YOUR_GOOGLE_SHEET_ID',
+  MAPS_API_KEY:     'YOUR_GOOGLE_MAPS_API_KEY',
+  ALLOWED_EMAILS:   ['adam@ward10windsor.ca','volunteer1@gmail.com','hq@ward10windsor.ca']
 };
 
 // ═══ STATE ═══
@@ -772,7 +822,7 @@ window.onload = function() {
 
 function handleGoogleLogin(response) {
   const p = parseJwt(response.credential);
-  if (!CONFIG.ALLOWED_EMAILS.includes(p.email)) {
+  if (!getAllowedEmails().includes(p.email)) {
     document.getElementById('login-error').classList.add('show'); return;
   }
   currentUser = {name:p.name, email:p.email, picture:p.picture};
@@ -794,6 +844,7 @@ function showApp() {
   else document.getElementById('tb-avatar').style.display = 'none';
   prefillVolunteer(); refreshDatetime();
   updateCampaignBadge();
+  renderUsers();
   renderDashboard(); renderVisits(); renderPolicies(); renderQuickRef();
   updateDataCount();
   if (!CONFIG.MAPS_API_KEY.startsWith('YOUR_')) loadMaps();
@@ -1214,6 +1265,107 @@ async function generateCoach(){
   }catch(e){el.textContent='Could not generate coaching tips.';}
 }
 
+// ═══ USER MANAGEMENT ═══
+let authorizedUsers = JSON.parse(localStorage.getItem('tr_users') || 'null') || getDefaultUsers();
+
+function getDefaultUsers() {
+  // Seed from CONFIG emails on first load
+  return CONFIG.ALLOWED_EMAILS.map((email, i) => ({
+    id: Date.now() + i,
+    name: email.split('@')[0],
+    email: email,
+    role: i === 0 ? 'Admin' : 'Volunteer',
+    addedDate: new Date().toISOString().slice(0, 10),
+    addedBy: 'System'
+  }));
+}
+
+function getAllowedEmails() {
+  return authorizedUsers.map(u => u.email);
+}
+
+function renderUsers() {
+  const list = document.getElementById('users-list');
+  const count = document.getElementById('user-count');
+  if (!list) return;
+  count.textContent = authorizedUsers.length;
+  if (!authorizedUsers.length) {
+    list.innerHTML = '<div class="empty-state">No users yet. Add your team above.</div>';
+    return;
+  }
+  const roleColors = {
+    'Admin': 'var(--gold)',
+    'HQ Staff': 'var(--cyan)',
+    'Team Lead': 'var(--blue)',
+    'Volunteer': 'var(--green)'
+  };
+  list.innerHTML = authorizedUsers.map(u => `
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;flex-shrink:0;">
+        ${(u.name||u.email)[0].toUpperCase()}
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:14px;color:var(--white);">${u.name || u.email.split('@')[0]}</div>
+        <div style="font-size:12px;color:var(--slate);margin-top:2px;">${u.email}</div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:8px;">
+          <span style="background:rgba(255,255,255,0.07);color:${roleColors[u.role]||'var(--slate)'};border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">${u.role}</span>
+          <span style="font-size:11px;color:var(--slate);">Added ${u.addedDate} by ${u.addedBy}</span>
+        </div>
+      </div>
+      ${u.email !== currentUser?.email ? `<button class="btn btn-danger btn-sm" onclick="removeUser(${u.id})">Remove</button>` : '<span style="font-size:11px;color:var(--cyan);">You</span>'}
+    </div>
+  `).join('');
+}
+
+function openAddUserModal() {
+  document.getElementById('um-name').value = '';
+  document.getElementById('um-email').value = '';
+  document.getElementById('um-role').value = 'Volunteer';
+  document.getElementById('user-modal').classList.add('show');
+}
+
+function closeUserModal() {
+  document.getElementById('user-modal').classList.remove('show');
+}
+
+function addUser() {
+  const name = document.getElementById('um-name').value.trim();
+  const email = document.getElementById('um-email').value.trim().toLowerCase();
+  const role = document.getElementById('um-role').value;
+
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid Gmail address.');
+    return;
+  }
+  if (authorizedUsers.find(u => u.email === email)) {
+    alert('This email is already authorized.');
+    return;
+  }
+
+  authorizedUsers.push({
+    id: Date.now(),
+    name: name || email.split('@')[0],
+    email,
+    role,
+    addedDate: new Date().toISOString().slice(0, 10),
+    addedBy: currentUser?.name || 'Admin'
+  });
+
+  localStorage.setItem('tr_users', JSON.stringify(authorizedUsers));
+  closeUserModal();
+  renderUsers();
+  alert(`✅ ${name || email} has been added. They can now sign in with their Google account.`);
+}
+
+function removeUser(id) {
+  const user = authorizedUsers.find(u => u.id === id);
+  if (!user) return;
+  if (!confirm(`Remove ${user.name || user.email} from the platform?`)) return;
+  authorizedUsers = authorizedUsers.filter(u => u.id !== id);
+  localStorage.setItem('tr_users', JSON.stringify(authorizedUsers));
+  renderUsers();
+}
+
 // ═══ NAV ═══
 function switchView(view,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -1225,9 +1377,11 @@ function switchView(view,btn){
   if(view==='map'&&gmap) plotMarkers();
   if(view==='policy')    renderPolicies();
   if(view==='settings')  updateDataCount();
+  if(view==='users')     renderUsers();
 }
 
 document.getElementById('policy-modal').addEventListener('click',function(e){if(e.target===this)closePolicyModal();});
+document.getElementById('user-modal').addEventListener('click',function(e){if(e.target===this)closeUserModal();});
 </script>
 </body>
 </html>
